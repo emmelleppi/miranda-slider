@@ -4,8 +4,9 @@
 Add this to your custom code
 
 ```html
-    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/de1e35a5316f40bd8263ed65568564bec922b45e/dist/slider2.82a639ab.chunk.js"></script>
-    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/de1e35a5316f40bd8263ed65568564bec922b45e/dist/slidermain.55e72276.chunk.js"></script>
+    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/9fd9674785cc623b3af892d27c0b68e0b0909d75/dist/runtime-main.b9a385e1.js"></script>
+    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/9fd9674785cc623b3af892d27c0b68e0b0909d75/dist/2.82a639ab.chunk.js"></script>
+    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/9fd9674785cc623b3af892d27c0b68e0b0909d75/dist/main.55e72276.chunk.js"></script>
 ```
 
 Then in your designer section you have to create a structure like this
