@@ -16,7 +16,7 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
   const [y, setY] = useState(0)
 
   const domContent = document.getElementById(id)
-  const imagesTags = Array.from(domContent.children)
+  const imagesTags = Array.from(domContent.getElementsByTagName("img"))
   const pages = imagesTags.map((x) => x.src)
 
   const [props, set] = useSprings(pages.length, (i) => ({
