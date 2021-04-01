@@ -31,7 +31,10 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
     x: i * width,
     sc: 1,
     display: 'block',
-    config: config.gentle
+    config: {
+      tension: 150,
+      friction: 20
+    }
   }))
 
   const setIndex = useCallback((s) => {
