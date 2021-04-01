@@ -9,6 +9,7 @@ import { useGesture } from 'react-use-gesture'
 const trans = (x, y) => `translate3d(${x}px,${y}px,0) `
 
 function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
+  const realIndex = useRef(0)
   const index = useRef(0)
   const father = useRef()
   const [width, setWidth] = useState(window.innerWidth)
@@ -27,17 +28,18 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
   }))
 
   const setIndex = useCallback((s) => {
-    index.current = clamp(index.current - s, 0, pages.length - 1)
+    realIndex.current = realIndex.current - s
+    index.current = ((realIndex.current <= 0 ? index.current + pages.length : index.current) - s) % pages.length
     if (currentIndex) {
       currentIndex.innerHTML = index.current + 1
     }
     set((i) => {
       if (i < index.current - 1 || i > index.current + 1) {
-        return { display: 'none' }
+        const x = ((i - realIndex.current) % pages.length) * width
+        return { x, sc: 1, display: 'none', zIndex: 1 }
       }
-      const x = (i - index.current) * width
-      const sc = 1
-      return { x, sc, display: 'block', zIndex: 1 }
+      const x = ((i - realIndex.current) % pages.length) * width
+      return { x, sc: 1, display: 'block', zIndex: 1 }
     })
   }, [set, width, currentIndex])
 
@@ -167,10 +169,10 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
               overflow: "hidden",
               transform: sc.interpolate((s) => `scale(${s})`)
             }}>
-            <animated.img
+            <animated.div
               className="slide-image"
-              src={pages[i]}
               style={{
+                backgroundImage: `url(${pages[i]})`,
                 pointerEvents: 'none',
                 willChange: 'transform',
                 overflow: "hidden",
