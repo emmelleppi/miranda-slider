@@ -142,10 +142,11 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        cursor: 'none'
+        // cursor: 'pointer'
       }}
-      onMouseMove={(e) => setCursor({ xy: [e.clientX - x, e.clientY - y] })}>
-      <animated.div
+      // onMouseMove={(e) => setCursor({ xy: [e.clientX - x, e.clientY - y] })}
+      >
+      {/* <animated.div
         style={{
           pointerEvents: 'none',
           zIndex: 999,
@@ -154,11 +155,11 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
           transform: cursor.xy.interpolate(trans)
         }}>
         <div className="slider-cursor" />
-      </animated.div>
+      </animated.div> */}
       {props.map(({ x, display, sc, zIndex }, i) => (
         <animated.div
           className="slide-wrapper-absolute"
-          {...bind()}
+          //{...bind()}
           key={i}
           style={{
             position: 'absolute',
