@@ -17,8 +17,15 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
   const [y, setY] = useState(0)
 
   const domContent = document.getElementById(id)
-  const imagesTags = Array.from(domContent.getElementsByTagName("img"))
-  const pages = imagesTags.map((x) => x.src)
+  const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
+  const pages = imagesTags.map((x) => {
+    let obj = {}
+    for (let i=0; i < x.style.length; i++ ) {
+      const rule = x.style[i]
+      obj[rule] = x.style[rule]
+    }
+    return obj
+  }).filter (x => x)
 
   const [props, set] = useSprings(pages.length, (i) => ({
     x: i * width,
@@ -172,7 +179,7 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
             <animated.div
               className="slide-image"
               style={{
-                backgroundImage: `url(${pages[i]})`,
+                ...pages[i],
                 pointerEvents: 'none',
                 willChange: 'transform',
                 overflow: "hidden",
