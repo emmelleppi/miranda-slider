@@ -1,16 +1,16 @@
 .slide-wrapper-relative {
-  width: calc(75vw);
+  width: calc(100vw);
   height: calc(50vh);
 }
 
 .slide-wrapper-absolute {
-  width: calc(75vw - 0rem);
+  width: calc(100vw - 0rem);
   height: calc(50vh - 0rem);
   margin: 0rem;
 }
 
-.slide-image {
-  width: 100%;
+.immagine {
+  width: 80vw;
   height: 100%;
 }
 

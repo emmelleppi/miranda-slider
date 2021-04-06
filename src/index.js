@@ -1,142 +1,113 @@
 import { render } from 'react-dom'
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import clamp from 'lodash-es/clamp'
-import { useSprings, animated, config, useSpring } from 'react-spring'
-import { useGesture } from 'react-use-gesture'
-// import { Lethargy } from 'lethargy'
+import { useSprings, animated } from 'react-spring'
 
-// const lethargy = new Lethargy()
-const trans = (x, y) => `translate3d(${x}px,${y}px,0) `
-
-function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
-  const realIndex = useRef(0)
-  const index = useRef(0)
+function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
   const father = useRef()
   const [width, setWidth] = useState(window.innerWidth)
-  const [x, setX] = useState(0)
-  const [y, setY] = useState(0)
 
   const domContent = document.getElementById(id)
   const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
-  const pages = imagesTags.map((x) => {
+  const items = imagesTags.map((x) => {
     let obj = {}
     for (let i=0; i < x.style.length; i++ ) {
       const rule = x.style[i]
       obj[rule] = x.style[rule]
     }
     return obj
-  }).filter (x => x)
-
-  const [props, set] = useSprings(pages.length, (i) => ({
-    x: i * width,
-    sc: 1,
-    display: 'block',
-    config: {
-      tension: 150,
-      friction: 20
-    }
-  }))
-
-  const setIndex = useCallback((s) => {
-    realIndex.current = realIndex.current - s
-    index.current = ((realIndex.current <= 0 ? index.current + pages.length : index.current) - s) % pages.length
-    if (currentIndex) {
-      currentIndex.innerHTML = index.current + 1
-    }
-    set((i) => {
-      if (i < index.current - 1 || i > index.current + 1) {
-        const x = ((i - realIndex.current) % pages.length) * width
-        return { x, sc: 1, display: 'none', zIndex: 1 }
+  })
+  const classes = imagesTags.map((x) => x.className)
+  
+  const idx = useCallback((x, l = items.length) => (x < 0 ? x + l : x) % l, [items])
+  const getPos = useCallback((i, firstVis, firstVisIdx) => idx(i - firstVis + firstVisIdx), [idx])
+  // Important only if specifyng width, centers the element in the slider
+  const offset = 0
+  const [springs, set] = useSprings(items.length, (i) => ({ x: (i < items.length - 1 ? i : -1) * width + offset }))
+  const prev = useRef([0, 1])
+  const index = useRef(0)
+  const [active, setActive] = useState(1)
+  const runSprings = useCallback(
+    (y, vy, down, xDir, cancel, xMove) => {
+      // This decides if we move over to the next slide or back to the initial
+      if (!down) {
+        index.current += ((-xMove + (width + xMove)) / width) * (xDir > 0 ? -1 : 1)
+        // cancel()
       }
-      const x = ((i - realIndex.current) % pages.length) * width
-      return { x, sc: 1, display: 'block', zIndex: 1 }
-    })
-  }, [set, width, currentIndex])
-
-  const handleDrag = useCallback(
-    (down, xDelta, xDir, distance, cancel) => {
-      if (down && distance > width / 2) {
-        cancel((index.current = clamp(index.current + (xDir > 0 ? -1 : 1), 0, pages.length - 1)))
+      if (index.current + 1 > items.length) {
+        setActive((index.current % items.length) + 1)
+      } else if (index.current < 0) {
+        setActive(items.length + ((index.current + 1) % items.length))
+      } else {
+        setActive(index.current + 1)
       }
-      if (currentIndex) {
-        currentIndex.innerHTML = index.current + 1
-      }
+      // The actual scrolling value
+      const finalY = index.current * width
+      // Defines currently visible slides
+      const firstVis = idx(Math.floor(finalY / width) % items.length)
+      const firstVisIdx = vy < 0 ? items.length - visible - 1 : 1
       set((i) => {
-        if (i < index.current - 1 || i > index.current + 1) {
-          return { display: 'none' }
+        const position = getPos(i, firstVis, firstVisIdx)
+        const prevPosition = getPos(i, prev.current[0], prev.current[1])
+        let rank = firstVis - (finalY < 0 ? items.length : 0) + position - firstVisIdx + (finalY < 0 && firstVis === 0 ? items.length : 0)
+        return {
+          // x is the position of each of our slides
+          x: (-finalY % (width * items.length)) + width * rank + (down ? xMove : 0) + offset,
+          // this defines if the movement is immediate
+          // So when an item is moved from one end to the other we don't
+          // see it moving
+          immediate: vy < 0 ? prevPosition > position : prevPosition < position
         }
-        const x = (i - index.current) * width + (down ? xDelta : 0)
-        const sc = down && index.current === i ? 1.2 : 1
-        return { x, sc, display: 'block', zIndex: down && index.current === i ? 100 : 1 }
       })
+      prev.current = [firstVis, firstVisIdx]
     },
-    [pages, set, width, currentIndex]
+    [idx, getPos, width, visible, set, items.length]
   )
 
-  // const handleWheel = useCallback(
-  //   (event, last, wait = false) => {
-  //     event.preventDefault();
-  //     event.stopPropagation()
-  //     if (!last) {
-  //       const s = lethargy.check(event)
-  //       if (s) {
-  //         if (!wait) {
-  //           setIndex(s)
-  //           return true
-  //         }
-  //       } else return false
-  //     } else {
-  //       return false
-  //     }
-  //   },
-  //   [pages, set, width, setIndex]
-  // )
-
-  const bind = useGesture({
-    onDrag: ({ down, direction: [xDir], distance, cancel }) =>
-      handleDrag(down, Math.sign(xDir) * distance, xDir, distance, cancel),
-    //onWheel: ({ event, last, memo }) => handleWheel(event, last, memo)
-  })
-
-  const [cursor, setCursor] = useSpring(() => ({
-    xy: [0, 0]
-  }))
+  useEffect(() => {
+    if (currentIndex) {
+      currentIndex.innerHTML = `0${active}`
+    }
+  }, [active])
 
   useEffect(() => {
-    const callback = () => setIndex(1)
+    const callback = () => {
+      index.current += -1
+      runSprings(0, -1, true, -0, () => {}, -0)
+    }
     if (buttonPrev) {
       buttonPrev.addEventListener("click", callback)
       return () => buttonPrev.removeEventListener("click", callback)
     }
-  }, [buttonPrev, setIndex])
+  }, [buttonPrev, runSprings])
 
   useEffect(() => {
-    const callback = () => setIndex(-1)
+    const callback = () => {
+      index.current += 1
+      runSprings(0, 1, true, -0, () => {}, -0)
+    }
     if (buttonNext) {
       buttonNext.addEventListener("click", callback)
       return () => buttonNext.removeEventListener("click", callback)
     }
-  }, [buttonNext, setIndex])
+  }, [buttonNext, runSprings])
 
   useLayoutEffect(() => {
     domContent.style.display = 'none'
-    const { x: domX, y: domY, width } = father.current.getBoundingClientRect()
+    const { width } = father.current.getBoundingClientRect()
     setWidth(width)
-    setX(domX)
-    setY(domY)
-  }, [setWidth, domContent, setX, setY])
+  }, [setWidth, domContent])
 
   useLayoutEffect(() => {
     if (lastIndex) {
-      lastIndex.innerHTML = pages.length || ""
+      lastIndex.innerHTML = `0${items.length}` || ""
     }
-  }, [lastIndex, pages])
+  }, [lastIndex, items])
 
   useLayoutEffect(() => {
     if (currentIndex) {
-      currentIndex.innerHTML = pages.length > 0 ? 1 : 0
+      currentIndex.innerHTML = items.length > 0 ? `01` : `00`
     }
-  }, [currentIndex, pages])
+  }, [currentIndex, items])
 
   return (
     <div
@@ -145,24 +116,11 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        // cursor: 'pointer'
       }}
-      // onMouseMove={(e) => setCursor({ xy: [e.clientX - x, e.clientY - y] })}
       >
-      {/* <animated.div
-        style={{
-          pointerEvents: 'none',
-          zIndex: 999,
-          position: 'absolute',
-          willChange: 'transform',
-          transform: cursor.xy.interpolate(trans)
-        }}>
-        <div className="slider-cursor" />
-      </animated.div> */}
-      {props.map(({ x, display, sc, zIndex }, i) => (
+      {springs.map(({ x, display, sc, zIndex }, i) => (
         <animated.div
           className="slide-wrapper-absolute"
-          //{...bind()}
           key={i}
           style={{
             position: 'absolute',
@@ -178,12 +136,11 @@ function Viewpager({ id, buttonPrev, buttonNext, currentIndex, lastIndex }) {
               height: '100%',
               willChange: 'transform',
               overflow: "hidden",
-              transform: sc.interpolate((s) => `scale(${s})`)
             }}>
             <animated.div
-              className="slide-image"
+              className={`slide-image ${classes[i]}`}
               style={{
-                ...pages[i],
+                ...items[i],
                 pointerEvents: 'none',
                 willChange: 'transform',
                 overflow: "hidden",
