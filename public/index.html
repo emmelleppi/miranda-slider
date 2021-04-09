@@ -2,147 +2,184 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="theme-color" content="#000000" />
-    <!--
-      manifest.json provides metadata used when your web app is added to the
-      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <title>Keen-Slider</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <link href="./styles.css" rel="stylesheet">
-    <title>React App</title>
+      .lazy__slide {
+        height: 50vw;
+        background: white;
+        background-image: url("https://keen-slider.io/images/loader.svg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 100px;
+        min-height: auto;
+      }
+
+      .lazy__slide svg circle {
+        fill: black;
+      }
+
+      .content {
+        height: 5rem;
+      }
+
+      .immagine {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center center;
+      }
+
+      .slider-cursor {
+        width: 4rem;
+        height: 4rem;
+        border: 1px solid white;
+        border-radius: 100%;
+        background: white;
+        will-change: "border";
+        transition: all 0.1s;
+      }
+      .slider-cursor.slider-cursor-active {
+        border: 4px solid red;
+      }
+
+      .slider-button {
+        width: 3rem;
+        height: 3rem;
+      }
+      .buttons-wrapper {
+        width: 10rem;
+        display: flex;
+        justify-content: space-between;
+      }
+      .meta-wrapper {
+        max-width: calc(100vw);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 1rem;
+      }
+      .slider-multi-img-description {
+        width: 100%;
+        margin-top: 1rem;
+      }
+    </style>
   </head>
-
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>
-
-    <div id="sliderImages1">
+    <div id="sliderImages1" class="lazy__slide">
       <div>
         <div>
           <div
-          data-slider-image
-          class="immagine"
-          style="background-image: url('https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');"
+            data-slider-image="0"
+            data-slider-image-desc="LOREM IPSUM 0"
+            class="immagine"
+            style="
+              background-image: url('https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+            "
           ></div>
+          <div class="content" data-slider-content="0">
+            <div>LOREM IPSUM 0</div>
+            <div>LOREM IPSUM 0</div>
+            <div>LOREM IPSUM 0</div>
+          </div>
         </div>
         <div>
           <div
-          data-slider-image
-          class="immagine"
-          style="background-image: url(https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)"
+            data-slider-image="1"
+            data-slider-image-desc="LOREM IPSUM 1"
+            class="immagine"
+            style="
+              background-image: url(https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260);
+            "
           ></div>
+          <div class="content" data-slider-content="1">LOREM IPSUM 1</div>
         </div>
         <div>
           <div
-          data-slider-image
-          class="immagine"
-          style="background-image: url(https://images.pexels.com/photos/351265/pexels-photo-351265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)"
+            data-slider-image="2"
+            data-slider-image-desc="LOREM IPSUM 2"
+            class="immagine"
+            style="
+              background-image: url(https://images.pexels.com/photos/351265/pexels-photo-351265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260);
+            "
           ></div>
+          <div class="content" data-slider-content="2">LOREM IPSUM 2</div>
         </div>
         <div>
           <div
-          data-slider-image
-          class="immagine"
-          style="background-image: url(https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)"
+            data-slider-image="3"
+            data-slider-image-desc="LOREM IPSUM 3"
+            class="immagine"
+            style="
+              background-image: url(https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260);
+            "
           ></div>
+          <div class="content" data-slider-content="3">LOREM IPSUM 3</div>
         </div>
       </div>
     </div>
-    <div data-slider-images="sliderImages1"></div>
+
+    <div
+      data-slider-images="sliderImages1"
+      data-slider-multiple-images="4"
+      data-slider-multiple-images-spacing="40"
+    ></div>
+
     <div class="meta-wrapper">
       <div class="buttons-wrapper">
         <div data-slider-button-prev="sliderImages1" class="slider-button">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </div>
         <div data-slider-button-next="sliderImages1" class="slider-button">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </div>
       </div>
       <div>
-        <span data-slider-current-index="sliderImages1" ></span>
-        <span>/</span>
-        <span data-slider-last-index="sliderImages1" ></span>
+        <span data-slider-current-index="sliderImages1"></span>
+        <span>of</span>
+        <span data-slider-last-index="sliderImages1"></span>
+      </div>
+      <div>
+        <span data-slider-desc="sliderImages1"></span>
       </div>
     </div>
-
-
-
-    <div id="sliderImages2">
-      <div>
-        <div
-        data-slider-image
-        class="immagine"
-        style="background-image: url('https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');"
-        ></div>
-      </div>
-      <div>
-        <div
-        data-slider-image
-        class="immagine"
-        style="background-image: url(https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)"
-        ></div>
-      </div>
-      <div>
-        <div
-        data-slider-image
-        class="immagine"
-        style="background-image: url(https://images.pexels.com/photos/351265/pexels-photo-351265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)"
-        ></div>
-      </div>
-      <div>
-        <div
-        data-slider-image
-        class="immagine"
-        style="background-image: url(https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)"
-        ></div>
-      </div>
-    </div>
-    <div data-slider-images="sliderImages2"></div>
-    <div class="meta-wrapper">
-      <div class="buttons-wrapper" >
-        <div data-slider-button-prev="sliderImages2" class="slider-button">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </div>
-        <div data-slider-button-next="sliderImages2" class="slider-button">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </div>
-      <div>
-        <span data-slider-current-index="sliderImages2" ></span>
-        <span>/</span>
-        <span data-slider-last-index="sliderImages2" ></span>
-      </div>
-    </div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-    <!-- <script src="./runtime-main.b9a385e1.js"></script>
-    <script src="./2.82a639ab.chunk.js"></script>
-    <script src="./main.55e72276.chunk.js"></script> -->
   </body>
 </html>

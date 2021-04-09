@@ -1,30 +1,30 @@
 # miranda-slider
 
-## integration 
+## integration
+
 Add this to your custom code
 
 ```html
-    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/e2e12adb88f875e4e733b6118735742c932d5650/dist/runtime-main.b9a385e1.js"></script>
-    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/e2e12adb88f875e4e733b6118735742c932d5650/dist/2.02e1dfb0.chunk.js"></script>
-    <script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/e2e12adb88f875e4e733b6118735742c932d5650/dist/main.420d84b1.chunk.js"></script>
+<script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/e2e12adb88f875e4e733b6118735742c932d5650/dist/runtime-main.b9a385e1.js"></script>
+<script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/e2e12adb88f875e4e733b6118735742c932d5650/dist/2.02e1dfb0.chunk.js"></script>
+<script src="https://rawcdn.githack.com/emmelleppi/miranda-slider/e2e12adb88f875e4e733b6118735742c932d5650/dist/main.420d84b1.chunk.js"></script>
 ```
 
 Then in your designer section you have to create a structure like this
 
-
 ```html
-    <div data-slider-images="sliderImages1"></div>
-    <div id="sliderImages1">
-      <img
-        src="https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-      />
-      <img
-        src="https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-      />
-      <img
-        src="https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-      />
-    </div>
+<div data-slider-images="sliderImages1"></div>
+<div id="sliderImages1">
+  <img
+    src="https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+  />
+  <img
+    src="https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+  />
+  <img
+    src="https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+  />
+</div>
 ```
 
 Where `data-slider-images` and `id` attributes must have the same value. That's because the slider script took the image references from the children of `<div id="sliderImages1">` and then it creates the slider into the `<div data-slider-images="sliderImages1">` element.
@@ -33,7 +33,6 @@ In this way you can visualize your images into the webflow designer without stra
 ## CSS
 
 ```css
-
 // This is the main wrapper
 .slide-wrapper-relative {
   width: calc(75vw);
