@@ -13,13 +13,21 @@ const springOptions = {
 
 export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, currentIndex, lastIndex }) {
   const domContent = domEl
-  const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
-  const [index, setIndex] = useState(0)
-  const draggedScale = 1.1
-  const trailingDelay = 10
-  const draggedSpring = "default"
-  const trailingSpring = "default"
-  const releaseSpring = "default"
+  const [imagesTags, realLength] = useMemo(() => {
+    const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
+    return [new Array(20).fill(array).flatMap(x => x), array.length]
+  },[domContent])
+
+  const [index, setIndex] = useState(10 * realLength)
+  
+  const draggedScale = 1.2
+  const trailingDelay = 1
+  const draggedSpring = {
+    tension: 300,
+    friction: 20
+  }
+  const trailingSpring = "stiff"
+  const releaseSpring = "stiff"
   const [loaded, setLoaded] = useState({})
 
   const handleClick = useCallback((i) => {
@@ -53,10 +61,10 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
       })
     }
     if (currentIndex) {
-      const curr = ((index + 1) % imagesTags.length) === 0 ? imagesTags.length : (index + 1) % imagesTags.length
+      const curr = ((index + 1) % realLength) === 0 ? realLength : (index + 1) % realLength
       currentIndex.innerHTML = curr > 9 ? `${curr}` : `0${curr}`
     }
-  }, [loaded, setLoaded, index, currentIndex, imagesTags])
+  }, [loaded, setLoaded, index, currentIndex, realLength])
 
   useEffect(() => {
     const callback = () => setIndex(s => {
@@ -82,9 +90,9 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
 
   useEffect(() => {
     if (lastIndex) {
-      lastIndex.innerHTML = imagesTags.length > 9 ? `${imagesTags.length}` : `0${imagesTags.length}`
+      lastIndex.innerHTML = realLength > 9 ? `${realLength}` : `0${realLength}`
     }
-  }, [lastIndex, imagesTags])
+  }, [lastIndex, realLength])
 
   const father = useRef()
   const [x, setX] = useState(0)
@@ -162,8 +170,9 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
       </animated.div>}
       <Slider
         index={index}
+        realLength={realLength}
         className={domContent.className}
-        style={domContentStyle}
+        style={{...domContentStyle, width: "10vw", margin: "auto"}}
         slideStyle={(i) => itemsStyle[i]}
         loaded={loaded}
         // slideClassName="multiple-slider-image"

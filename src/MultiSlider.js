@@ -27,7 +27,7 @@ const slidesWrapperStyle = () => ({
 export default function Slider({
   children,
   index,
-  loaded,
+  realLength,
   onIndexChange,
   className,
   style,
@@ -78,6 +78,7 @@ export default function Slider({
 
   // callback called by the intersection observer updating
   // visibleIndexes
+  const marcello = useRef()
   const cb = (slides) => {
     slides.forEach(({ isIntersecting, target }) =>
       visibleIndexes.current[isIntersecting ? "add" : "delete"](
@@ -87,6 +88,16 @@ export default function Slider({
     const visibles = Array.from(visibleIndexes.current).sort();
     firstVisibleIndex.current = visibles[0];
     lastVisibleIndex.current = visibles[visibles.length - 1];
+    if (marcello.current && marcello.current.children) {
+      const children = Array.from(marcello.current.children)
+      console.log(children)
+      children.forEach(child => (child.style.display = "flex"))
+      visibles.forEach(x => {
+        if (children[x]) {
+          children[x].style.display = "none"
+        }
+      })
+    }
   };
 
   const observer = useRef(null);
@@ -301,13 +312,14 @@ export default function Slider({
         >
           <animated.div
             style={{
-              scale: s.to([1,draggedScale],[1, 0.95]),
+              scale: s.to([1, draggedScale],[1, 0.95]),
               overflow: "hidden",
               transformStyle: "preserve-3d",
               willChange: "transform",
             }}
             >
           <animated.div
+            ref={marcello}
             style={{
               scale: s,
               willChange: "transform",
@@ -317,7 +329,6 @@ export default function Slider({
               transformStyle: "preserve-3d",
             }}
           >
-            {/* {loaded[i] ? children[i] : null} */}
             {children[i]}
           </animated.div>
         </animated.div>
