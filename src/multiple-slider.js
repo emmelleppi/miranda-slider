@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo, useRef } from "react"
 import Slider from "./MultiSlider";
 import { config } from "react-spring";
 import { useSpring, animated } from "react-spring";
+import { formatStringToCamelCase } from "./utils";
 
 const trans = (x, y) => `translate3d(${x}px,${y}px,0) `
 
@@ -11,7 +12,7 @@ const springOptions = {
   default: undefined
 };
 
-export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, currentIndex, lastIndex }) {
+export default function MultiSlider({ showAlts,cursor,domEl, buttonPrev, buttonNext, currentIndex, lastIndex }) {
   const domContent = domEl
   const [imagesTags, realLength] = useMemo(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
@@ -37,26 +38,25 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
     let obj = {}
     for (let i=0; i < x.style.length; i++ ) {
       const rule = x.style[i]
-      obj[rule] = x.style[rule]
+      obj[formatStringToCamelCase(rule)] = x.style[rule]
     }
     return obj
   }),[imagesTags])
 
-  const domContentStyle = useMemo(() => {
-      let obj = {}
-      for (let i=0; i < domContent.style.length; i++ ) {
-        const rule = domContent.style[i]
-        obj[rule] = domContent.style[rule]
-      }
-      return obj
-  },[domContent])
+  const descs = useMemo(() => showAlts ? imagesTags.map(item => {
+    const imgs = item.getElementsByTagName("img")
+    if (imgs && imgs[0]) {
+      return imgs[0].getAttribute("alt")
+    }
+    return null
+  }) : [],[showAlts, imagesTags])
 
   useEffect(() => {
-    if (!loaded[index] || !loaded[index+1] || !loaded[index+2]) {
-      setLoaded(s => {
-          return { [index]: true, [index+1]: true, [index+2]: true, ...s }
-      })
-    }
+    // if (!loaded[index] || !loaded[index+1] || !loaded[index+2]) {
+    //   setLoaded(s => {
+    //       return { [index]: true, [index+1]: true, [index+2]: true, ...s }
+    //   })
+    // }
     if (currentIndex) {
       const curr = ((index + 1) % realLength) === 0 ? realLength : (index + 1) % realLength
       currentIndex.innerHTML = curr > 9 ? `${curr}` : `0${curr}`
@@ -110,11 +110,10 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
   const [cursorOuterHtml] = useState(cursor?.outerHTML || null)
 
   useEffect(() => {
-    domContent.style.display = 'none'
     if (cursor) {
       cursor.style.display = 'none'
     }
-  }, [domContent, cursor])
+  }, [cursor])
 
   useEffect(() => {
     setInterval(onScroll, 100)
@@ -167,9 +166,10 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
       </animated.div>}
       <Slider
         index={index}
+        descs={descs}
         realLength={realLength}
         className={domContent.className}
-        style={{...domContentStyle, width: "10vw", margin: "auto"}}
+        style={{ width: "10vw", margin: "auto"}}
         slideStyle={(i) => itemsStyle[i]}
         loaded={loaded}
         // slideClassName="multiple-slider-image"

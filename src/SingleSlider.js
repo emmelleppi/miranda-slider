@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSprings, animated } from 'react-spring'
+import { formatStringToCamelCase } from './utils'
 
 export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
     const father = useRef()
@@ -15,12 +16,12 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
           let obj = {}
           for (let i=0; i < x.style.length; i++ ) {
             const rule = x.style[i]
-            obj[rule] = x.style[rule]
+            obj[formatStringToCamelCase(rule)] = x.style[rule]
           }
           return obj
         })
         const classes = imagesTags.map((x) => x.className)
-        const desc = imagesTags.map((el) => el.getAttribute("data-slider-desc"))
+        const desc = imagesTags.map((el) => el.getAttribute("alt"))
         return { items, classes, desc }
     }, [domContent])
     
@@ -69,11 +70,11 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
     )
   
     useEffect(() => {
-    if (!loaded[active-1]) {
-        setLoaded(s => {
-            return { [active-1]: true, ...s }
-        })
-    }
+      if (!loaded[active-1]) {
+          setLoaded(s => {
+              return { [active-1]: true, ...s }
+          })
+      }
       if (currentIndex) {
         currentIndex.innerHTML = active > 9 ? active : `0${active}`
       }
@@ -108,17 +109,16 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
     }, [buttonNext, runSprings])
   
     useEffect(() => {
-      domContent.style.display = 'none'
       const { width } = father.current.getBoundingClientRect()
       setWidth(width)
-    }, [setWidth, domContent])
+    }, [setWidth])
   
     useEffect(() => {
       if (lastIndex) {
         lastIndex.innerHTML = items.length > 9 ? items.length : `0${items.length}`
       }
     }, [lastIndex, items])
-  console.log(loaded)
+
     return (
       <div
         ref={father}

@@ -28,6 +28,7 @@ export default function Slider({
   children,
   index,
   realLength,
+  descs,
   onIndexChange,
   className,
   style,
@@ -90,7 +91,6 @@ export default function Slider({
     lastVisibleIndex.current = visibles[visibles.length - 1];
     if (marcello.current && marcello.current.children) {
       const children = Array.from(marcello.current.children)
-      console.log(children)
       children.forEach(child => (child.style.display = "flex"))
       visibles.forEach(x => {
         if (children[x]) {
@@ -303,6 +303,7 @@ export default function Slider({
           style={{
             alignItems: "center",
             display: "flex",
+            flexFlow: "column nowrap",
             ...slideStyleFunc(i),
             zIndex,
             [axis]: pos,
@@ -333,6 +334,7 @@ export default function Slider({
             {children[i]}
           </animated.div>
         </animated.div>
+        {descs[i] && <div className="multi-slider-alt" >{descs[i]}</div>}
         </animated.div>
       ))}
     </div>
