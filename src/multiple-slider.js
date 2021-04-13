@@ -15,10 +15,10 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
   const domContent = domEl
   const [imagesTags, realLength] = useMemo(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
-    return [new Array(20).fill(array).flatMap(x => x), array.length]
+    return [new Array(1).fill(array).flatMap(x => x), array.length]
   },[domContent])
 
-  const [index, setIndex] = useState(10 * realLength)
+  const [index, setIndex] = useState(0)
   
   const draggedScale = 1.2
   const trailingDelay = 1
@@ -185,6 +185,9 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
       >
         {imagesTags.map((el, i) => (
           <div
+          style={{
+            pointerEvents: 'none',
+          }}
             key={i}
             onClick={() => handleClick(i)}
             dangerouslySetInnerHTML={{ __html: el.outerHTML }}
