@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { useSprings, animated } from "react-spring";
+import { useSprings, animated, useSpring } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import useResizeObserver from "use-resize-observer";
 
@@ -120,11 +120,14 @@ export default function Slider({
     return {
       x: restPos.current,
       y: 0,
-      s: 1,
       zIndex: 0,
       immediate: (key) => key === "zIndex"
     };
   });
+
+  const [{ scale }, setScale] = useSpring(() => ({
+    scale: 1
+  }))
 
   // everytime the index changes, we should calculate the right position
   // of the slide so that its centered: this is recomputed everytime
@@ -144,7 +147,6 @@ export default function Slider({
     if (indexRef.current === index) {
       set((_i) => ({
         [axis]: restPos.current,
-        s: 1,
         config: { ...releaseSpring, velocity: velocity.current }
       }));
     } else {
@@ -161,7 +163,6 @@ export default function Slider({
       set((i) => {
         return {
           [axis]: restPos.current,
-          s: 1,
           // config: key => key === axis && releaseSpring,
           config: releaseSpring,
           delay:
@@ -214,7 +215,6 @@ export default function Slider({
         set((i) => {
           return {
             [axis]: memo + mov,
-            s: draggedScale,
             config: (key) =>
               key === axis && i === pressedIndex
                 ? draggedSpring
@@ -254,7 +254,6 @@ export default function Slider({
         else
           set(() => ({
             [axis]: restPos.current,
-            s: 1,
             // config: key => key === axis && releaseSpring,
             config: releaseSpring
           }));
@@ -311,8 +310,10 @@ export default function Slider({
           }}
         >
           <animated.div
+            onPointerDown={() => setScale({ scale: draggedScale })}
+            onPointerUp={() => setScale({ scale: 1 })}
             style={{
-              scale: s.to([1, draggedScale],[1, 0.95]),
+              scale: scale.to([1, draggedScale],[1, 0.95]),
               overflow: "hidden",
               transformStyle: "preserve-3d",
               willChange: "transform",
@@ -321,7 +322,7 @@ export default function Slider({
           <animated.div
             ref={marcello}
             style={{
-              scale: s,
+              scale,
               willChange: "transform",
               display: "flex",
               justifyContent: "center",

@@ -21,13 +21,10 @@ export default function MultiSlider({ cursor,domEl, buttonPrev, buttonNext, curr
   const [index, setIndex] = useState(0)
   
   const draggedScale = 1.2
-  const trailingDelay = 1
-  const draggedSpring = {
-    tension: 300,
-    friction: 20
-  }
+  const trailingDelay = 30
+  const draggedSpring = "stiff"
   const trailingSpring = "stiff"
-  const releaseSpring = "stiff"
+  const releaseSpring = "default"
   const [loaded, setLoaded] = useState({})
 
   const handleClick = useCallback((i) => {
