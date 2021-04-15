@@ -21,7 +21,7 @@ export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev,
 
   const [index, setIndex] = useState(0)
   
-  const draggedScale = 1.2
+  const draggedScale = 0.1
   const trailingDelay = 30
   const draggedSpring = "stiff"
   const trailingSpring = "stiff"
@@ -95,7 +95,7 @@ export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev,
   const [x, setX] = useState(0)
   const [y, setY] = useState(0)
   const [cursorSpring, setCursor] = useSpring(() => ({
-    xy: [0, 0]
+    xy: [0, 0],
   }))
   const onScroll = useCallback(() => {
     const { x: domX, y: domY } = father.current.getBoundingClientRect()

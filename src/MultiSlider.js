@@ -3,6 +3,15 @@ import { useSprings, animated, useSpring } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import useResizeObserver from "use-resize-observer";
 
+function easeInOutExpo(x) {
+  return x === 0
+    ? 0
+    : x === 1
+    ? 1
+    : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2
+    : (2 - Math.pow(2, -20 * x + 10)) / 2;
+  }
+
 const defaultProps = {
   draggedScale: 1,
   draggedSpring: { tension: 1200, friction: 40 },
@@ -127,7 +136,8 @@ export default function Slider({
   });
 
   const [{ scale }, setScale] = useSpring(() => ({
-    scale: 1
+    scale: 0,
+    config: { duration: 800 },
   }))
 
   // everytime the index changes, we should calculate the right position
@@ -293,7 +303,7 @@ export default function Slider({
 
   return (
     <div ref={root} className={className} style={{ ...rootStyle, ...style }}>
-      {springs.map(({ [axis]: pos, s, zIndex }, i) => (
+      {springs.map(({ [axis]: pos, zIndex }, i) => (
         <animated.div
           // passing the index as an argument will let our handler know
           // which slide is being dragged
@@ -313,10 +323,10 @@ export default function Slider({
           }}
         >
           <animated.div
-            onPointerDown={() => setScale({ scale: draggedScale })}
-            onPointerUp={() => setScale({ scale: 1 })}
+            onPointerDown={() => setScale({ scale: 1 })}
+            onPointerUp={() => setScale({ scale: 0 })}
             style={{
-              scale: scale.to([1, draggedScale],[1, 0.95]),
+              transform: scale.to(x => `scaleY(${1 - draggedScale * easeInOutExpo(x)})`),
               overflow: "hidden",
               transformStyle: "preserve-3d",
               willChange: "transform",
@@ -325,7 +335,7 @@ export default function Slider({
           <animated.div
             ref={marcello}
             style={{
-              scale,
+              transform: scale.to(x =>  `scale(${1 + draggedScale * easeInOutExpo(x)}, ${1 + 2 * draggedScale * easeInOutExpo(x)})`),
               willChange: "transform",
               display: "flex",
               justifyContent: "center",
