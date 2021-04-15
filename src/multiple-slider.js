@@ -12,7 +12,7 @@ const springOptions = {
   default: undefined
 };
 
-export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev, buttonNext, currentIndex, lastIndex }) {
+export default function MultiSlider({ margin, marginMobile, noDrag, showAlts,cursor,domEl, buttonPrev, buttonNext, currentIndex, lastIndex }) {
   const domContent = domEl
   const [imagesTags, realLength] = useMemo(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
@@ -22,7 +22,7 @@ export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev,
   const [index, setIndex] = useState(0)
   
   const draggedScale = 0.1
-  const trailingDelay = 30
+  const trailingDelay = 0
   const draggedSpring = "stiff"
   const trailingSpring = "stiff"
   const releaseSpring = "default"
@@ -33,6 +33,8 @@ export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev,
       setIndex(i);
     }
   },[index, setIndex])
+
+  const _margin = useMemo(() => window.innerWidth <= 991 ? marginMobile : margin, [margin, marginMobile])
 
   const itemsStyle = useMemo(() => imagesTags.map((x) => {
     let obj = {}
@@ -147,13 +149,13 @@ export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev,
     <div
       style={{ position: "relative", overflow: "hidden" }}
       ref={father}
-      onPointerEnter={() => onPointerOver(true)}
-      onPointerLeave={() => onPointerOver(false)}
-      onPointerDown={() => onPointerClick(true)}
-      onPointerUp={() => onPointerClick(false)}
-      onMouseMove={(e) => setCursor({ xy: [e.clientX - x, e.clientY - y] })}
+      onPointerEnter={() => !noDrag && onPointerOver(true)}
+      onPointerLeave={() => !noDrag && onPointerOver(false)}
+      onPointerDown={() => !noDrag && onPointerClick(true)}
+      onPointerUp={() => !noDrag && onPointerClick(false)}
+      onMouseMove={(e) => !noDrag && setCursor({ xy: [e.clientX - x, e.clientY - y] })}
     >
-      {cursorOuterHtml && <animated.div
+      {cursorOuterHtml && !noDrag && <animated.div
         ref={cursorRef}
         dangerouslySetInnerHTML={{ __html: cursorOuterHtml }}
         style={{
@@ -166,8 +168,9 @@ export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev,
       </animated.div>}
       <Slider
         index={index}
+        noDrag={noDrag}
         descs={descs}
-        margin={margin}
+        margin={_margin}
         realLength={realLength}
         className={domContent.className}
         style={{ width: "10vw", margin: "auto"}}

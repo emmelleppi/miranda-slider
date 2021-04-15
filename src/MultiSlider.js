@@ -1,11 +1,14 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { useSprings, animated, useSpring } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import useResizeObserver from "use-resize-observer";
 
-  function easeInOutExpo(x) {
-    return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
-    }
+function easeOutExpo(x) {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+}
+function easeInExpo(x) {
+  return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+  }
 
 const defaultProps = {
   draggedScale: 1,
@@ -31,6 +34,7 @@ const slidesWrapperStyle = () => ({
 export default function Slider({
   children,
   index,
+  noDrag,
   realLength,
   descs,
   margin,
@@ -129,11 +133,6 @@ export default function Slider({
       immediate: (key) => key === "zIndex"
     };
   });
-
-  const [{ scale }, setScale] = useSpring(() => ({
-    scale: 0,
-    config: { duration: 800 },
-  }))
 
   // everytime the index changes, we should calculate the right position
   // of the slide so that its centered: this is recomputed everytime
@@ -296,13 +295,35 @@ export default function Slider({
   const rootStyle = slidesWrapperStyle();
   if (!className) rootStyle.width = "100%";
 
+  const [{ scale }, animateScale] = useSpring(() => ({
+    from: { scale: 0 },
+    config: { duration: 1000 },
+  }))
+  const ease = useRef(easeOutExpo)
+  const onPointerDown = useCallback(() => {
+    if (noDrag) return
+    ease.current = easeOutExpo
+    animateScale({
+      from: { scale: 0 },
+      to: { scale: 1 },
+    })
+  }, [ease, animateScale, noDrag])
+  const onPointerUp = useCallback(() => {
+    if (noDrag) return
+    ease.current = easeInExpo
+    animateScale({
+      from: { scale: 1 },
+      to: { scale: 0 },
+    })
+  }, [ease, animateScale, noDrag])
+
   return (
     <div ref={root} className={className} style={{ ...rootStyle, ...style }}>
       {springs.map(({ [axis]: pos, zIndex }, i) => (
         <animated.div
           // passing the index as an argument will let our handler know
           // which slide is being dragged
-          {...bind(i)}
+          {...(!noDrag && bind(i))}
           key={i}
           data-index={i}
           className={slideClassName}
@@ -318,10 +339,10 @@ export default function Slider({
           }}
         >
           <animated.div
-            onPointerDown={() => setScale({ scale: 1 })}
-            onPointerUp={() => setScale({ scale: 0 })}
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
             style={{
-              transform: scale.to(x => `scaleY(${1 - draggedScale * easeInOutExpo(x)})`),
+              transform: scale.to(x => `scaleY(${1 - draggedScale * ease.current(x)})`),
               overflow: "hidden",
               transformStyle: "preserve-3d",
               willChange: "transform",
@@ -330,7 +351,7 @@ export default function Slider({
           <animated.div
             ref={marcello}
             style={{
-              transform: scale.to(x =>  `scale(${1 + draggedScale * easeInOutExpo(x)}, ${1 + 2 * draggedScale * easeInOutExpo(x)})`),
+              transform: scale.to(x =>  `scale(${1 + draggedScale * ease.current(x)}, ${1 + 2 * draggedScale * ease.current(x)})`),
               willChange: "transform",
               display: "flex",
               justifyContent: "center",
