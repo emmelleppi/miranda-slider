@@ -18,6 +18,10 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
             const rule = x.style[i]
             obj[formatStringToCamelCase(rule)] = x.style[rule]
           }
+          const src = x.getAttribute("src")
+          if (src) {
+            obj["backgroundImage"] = `url(${src})`
+          }
           return obj
         })
         const classes = imagesTags.map((x) => x.className)

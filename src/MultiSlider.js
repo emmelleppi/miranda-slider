@@ -29,6 +29,7 @@ export default function Slider({
   index,
   realLength,
   descs,
+  margin,
   onIndexChange,
   className,
   style,
@@ -307,7 +308,8 @@ export default function Slider({
             ...slideStyleFunc(i),
             zIndex,
             [axis]: pos,
-            willChange: "transform"
+            willChange: "transform",
+            margin: `0 ${margin}vw`
           }}
         >
           <animated.div

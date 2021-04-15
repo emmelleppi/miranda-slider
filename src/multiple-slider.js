@@ -12,7 +12,7 @@ const springOptions = {
   default: undefined
 };
 
-export default function MultiSlider({ showAlts,cursor,domEl, buttonPrev, buttonNext, currentIndex, lastIndex }) {
+export default function MultiSlider({ margin, showAlts,cursor,domEl, buttonPrev, buttonNext, currentIndex, lastIndex }) {
   const domContent = domEl
   const [imagesTags, realLength] = useMemo(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
@@ -167,6 +167,7 @@ export default function MultiSlider({ showAlts,cursor,domEl, buttonPrev, buttonN
       <Slider
         index={index}
         descs={descs}
+        margin={margin}
         realLength={realLength}
         className={domContent.className}
         style={{ width: "10vw", margin: "auto"}}
