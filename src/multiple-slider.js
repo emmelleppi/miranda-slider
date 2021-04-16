@@ -20,6 +20,7 @@ export default function MultiSlider({ margin, marginMobile, noDrag, showAlts,cur
   },[domContent])
 
   const [index, setIndex] = useState(0)
+  const [style, setStyle] = useState()
   
   const draggedScale = 0.1
   const trailingDelay = 0
@@ -34,7 +35,8 @@ export default function MultiSlider({ margin, marginMobile, noDrag, showAlts,cur
     }
   },[index, setIndex])
 
-  const _margin = useMemo(() => window.innerWidth <= 991 ? marginMobile : margin, [margin, marginMobile])
+  const isMobile = window.innerWidth <= 991
+  const _margin = useMemo(() => isMobile ? marginMobile : margin, [margin, marginMobile, isMobile])
 
   const itemsStyle = useMemo(() => imagesTags.map((x) => {
     let obj = {}
@@ -54,11 +56,24 @@ export default function MultiSlider({ margin, marginMobile, noDrag, showAlts,cur
   }) : [],[showAlts, imagesTags])
 
   useEffect(() => {
-    // if (!loaded[index] || !loaded[index+1] || !loaded[index+2]) {
-    //   setLoaded(s => {
-    //       return { [index]: true, [index+1]: true, [index+2]: true, ...s }
-    //   })
-    // }
+    const maxWidth = imagesTags.reduce((acc, x) => {
+        const { width } = x.getBoundingClientRect()
+        console.log(x, x.getBoundingClientRect())
+        if (width > acc) {
+          return width
+        }
+        return acc
+    }, 0)
+    
+    setStyle({
+      width:  isMobile || noDrag ? `${maxWidth/3}px` : "10vw",
+      margin: isMobile || noDrag ? `0 auto 0 ${maxWidth/3}px` : "auto"
+    })
+    domContent.style.display = "none"
+  }, [imagesTags, isMobile, noDrag, setStyle, domContent])
+
+
+  useEffect(() => {
     if (currentIndex) {
       const curr = ((index + 1) % realLength) === 0 ? realLength : (index + 1) % realLength
       currentIndex.innerHTML = curr > 9 ? `${curr}` : `0${curr}`
@@ -147,7 +162,7 @@ export default function MultiSlider({ margin, marginMobile, noDrag, showAlts,cur
 
   return (
     <div
-      style={{ position: "relative", overflow: "hidden" }}
+      style={{ position: "relative", overflowX: "hidden" }}
       ref={father}
       onPointerEnter={() => !noDrag && onPointerOver(true)}
       onPointerLeave={() => !noDrag && onPointerOver(false)}
@@ -166,14 +181,14 @@ export default function MultiSlider({ margin, marginMobile, noDrag, showAlts,cur
           transform: cursorSpring.xy.to(trans)
         }}>
       </animated.div>}
-      <Slider
+      {style && <Slider
         index={index}
         noDrag={noDrag}
         descs={descs}
         margin={_margin}
         realLength={realLength}
         className={domContent.className}
-        style={{ width: "10vw", margin: "auto"}}
+        style={style}
         slideStyle={(i) => itemsStyle[i]}
         loaded={loaded}
         // slideClassName="multiple-slider-image"
@@ -194,7 +209,7 @@ export default function MultiSlider({ margin, marginMobile, noDrag, showAlts,cur
             dangerouslySetInnerHTML={{ __html: el.outerHTML }}
           />
         ))}
-      </Slider>
+      </Slider>}
     </div>
   );
 }

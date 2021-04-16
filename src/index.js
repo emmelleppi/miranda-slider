@@ -18,7 +18,6 @@ Array.from(nodeElements).forEach((el) => {
 
 const multiNodeElements = document.querySelectorAll('[data-multi-slider-id]')
 Array.from(multiNodeElements).forEach((el) => {
-  el.style.display = "none"
   const id = el.getAttribute('data-multi-slider-id')
   const showAlts = el.hasAttribute('data-multi-slider-show-alt')
   const noDrag = el.hasAttribute('data-multi-slider-no-drag')
