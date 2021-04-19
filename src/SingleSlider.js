@@ -87,7 +87,7 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
     if (currentIndex) {
       currentIndex.innerHTML = active > 9 ? active : `0${active}`
     }
-  }, [active])
+  }, [active, currentIndex, loaded])
 
   useEffect(() => {
     if (descEl) {

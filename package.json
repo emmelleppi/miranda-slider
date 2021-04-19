@@ -15,12 +15,47 @@
     "react-use-gesture": "8.0.0",
     "use-resize-observer": "^7.0.0"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "rules": {
+      "array-callback-return": "error",
+      "react/react-in-jsx-scope": 0,
+      "react/display-name": 0,
+      "react/prop-types": 0,
+      "@typescript-eslint/explicit-function-return-type": 0,
+      "@typescript-eslint/explicit-member-accessibility": 0,
+      "@typescript-eslint/no-non-null-assertion": 0,
+      "@typescript-eslint/explicit-module-boundary-types": 0,
+      "@typescript-eslint/indent": 0,
+      "@typescript-eslint/member-delimiter-style": 0,
+      "@typescript-eslint/no-explicit-any": 0,
+      "@typescript-eslint/no-use-before-define": 0,
+      "@typescript-eslint/no-var-requires": 0,
+      "@typescript-eslint/no-unused-vars": [
+        0,
+        {
+          "varsIgnorePattern": "_"
+        }
+      ],
+      "no-console": [
+        1,
+        {
+          "allow": [
+            "warn",
+            "error"
+          ]
+        }
+      ]
+    }
   },
   "browserslist": {
     "production": [
@@ -33,5 +68,29 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/nprogress": "^0.2.0",
+    "@types/zxcvbn": "^4.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^4.3.8",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }

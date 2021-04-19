@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import { useSprings, animated, useSpring } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import useResizeObserver from 'use-resize-observer'
@@ -35,13 +35,11 @@ export default function Slider({
   children,
   index,
   noDrag,
-  realLength,
   descs,
   margin,
   onIndexChange,
   className,
   style,
-  widths,
   slideStyle,
   slideClassName,
   draggedScale,
@@ -63,7 +61,7 @@ export default function Slider({
   const axis = 'x'
   const size = width
 
-  let [minIndex, maxIndex] = [0, children.length - 1]
+  let [, maxIndex] = [0, children.length - 1]
   maxIndex = maxIndex > 0 ? maxIndex : children.length - 1 + maxIndex
 
   // indexRef is an internal reference to the current slide index
@@ -139,8 +137,8 @@ export default function Slider({
     if (!width || !height) return
     // here we take the selected slide
     // and calculate its position so its centered in the slides wrapper
-    const { offsetLeft, offsetWidth } = root.current.children[index % (maxIndex + 1)]
-    restPos.current = Math.round(-offsetLeft + (width - offsetWidth) / 2)
+    const { offsetLeft } = root.current.children[index % (maxIndex + 1)]
+    restPos.current = Math.round(-offsetLeft) // + (width - offsetWidth) / 2)
     // two options then:
     // 1. the index was changed through gestures: in that case indexRef
     // is equal to index, we just want to set the position where it should
@@ -171,7 +169,7 @@ export default function Slider({
     }
     // finally we update indexRef to match index
     indexRef.current = index
-  }, [index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay])
+  }, [maxIndex, index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay])
 
   // adding the bind listener
   const bind = useDrag(
@@ -289,7 +287,7 @@ export default function Slider({
   }, [ease, animateScale, noDrag])
 
   return (
-    <div ref={root} className={className} style={{ ...rootStyle, ...style, width: widths ? widths[index] : "0px",   transition: "width 0.5s"  }}>
+    <div ref={root} className={className} style={{ ...rootStyle, ...style }}>
       {springs.map(({ [axis]: pos, zIndex }, i) => (
         <animated.div
           // passing the index as an argument will let our handler know
@@ -299,10 +297,9 @@ export default function Slider({
           data-index={i}
           className={slideClassName}
           style={{
-            alignItems: 'center',
             display: 'flex',
             flexFlow: 'column nowrap',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             ...slideStyleFunc(i),
             zIndex,
             [axis]: pos,

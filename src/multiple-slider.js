@@ -78,34 +78,14 @@ export default function MultiSlider({
         : [],
     [showAlts, imagesTags]
   )
-  
-  const [widths, setWidths] = useState()
+
   useEffect(() => {
-    const maxWidth = imagesTags.reduce((acc, x, i) => {
-      const img = x.getElementsByTagName("img")
-      if (img && img[0]) {
-        const { width } = img[0].getBoundingClientRect()
-        if (width > acc) {
-          return width
-        }
-      }
-      return acc
-    }, 0)
-    const maxWidths = imagesTags.map((x) => {
-      const aaaa = x.getElementsByTagName("img")
-      if (aaaa && aaaa[0]) {
-        const { width } = aaaa[0].getBoundingClientRect()
-        return `${width}px`
-      }
-      return 0
-    })
-    setWidths(maxWidths)
     setStyle({
-      width: `${maxWidth}px`,
-      margin: `0 0 0 ${window.innerWidth * (isMobile ? marginMobile : margin)/100}px`,
+      width: `10vw`,
+      margin: `0 0 0 ${(window.innerWidth * (isMobile ? marginMobile : margin)) / 100}px`
     })
     domContent.style.display = 'none'
-  }, [setWidths, imagesTags, isMobile, noDrag, setStyle, domContent, marginMobile, margin])
+  }, [imagesTags, isMobile, noDrag, setStyle, domContent, marginMobile, margin])
 
   useEffect(() => {
     if (currentIndex) {
@@ -127,7 +107,7 @@ export default function MultiSlider({
       buttonPrev.addEventListener('click', callback)
       return () => buttonPrev.removeEventListener('click', callback)
     }
-  }, [buttonPrev, setIndex])
+  }, [buttonPrev, setIndex, imagesTags])
 
   useEffect(() => {
     const callback = () => setIndex((s) => s + 1)
@@ -157,7 +137,7 @@ export default function MultiSlider({
     if (y !== domY) {
       setY(domY)
     }
-  }, [x, y, setX, setY, father.current])
+  }, [x, y, setX, setY])
 
   const [cursorOuterHtml] = useState(cursor?.outerHTML || null)
 
@@ -222,7 +202,7 @@ export default function MultiSlider({
             transform: cursorSpring.xy.to(trans)
           }}></animated.div>
       )}
-      {style && widths.length > 0 &&(
+      {style && (
         <Slider
           index={index}
           noDrag={noDrag}
@@ -231,7 +211,6 @@ export default function MultiSlider({
           realLength={realLength}
           className={domContent.className}
           style={style}
-          widths={widths}
           slideStyle={(i) => itemsStyle[i]}
           loaded={loaded}
           // slideClassName="multiple-slider-image"
