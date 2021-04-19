@@ -38,8 +38,55 @@
           noto, segoe ui, arial, sans-serif;
       }
 
-      .section.dr {
-        padding: 5vw 0;
+      .hp-inner {
+        width: 43.5vw;
+      }
+      .w-inline-block {
+        max-width: 100%;
+        display: inline-block;
+      }
+      a {
+        background-color: transparent;
+        color: #2d2926;
+        text-decoration: none;
+      }
+      .wrap {
+        overflow: hidden;
+      }
+      .outer {
+        overflow: hidden;
+        -webkit-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+      }
+      .img {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+      }
+
+      img {
+        border: 0;
+        vertical-align: middle;
+        display: inline-block;
+        max-width: 100%;
+      }
+      .hp-block {
+        margin-top: 1.5vw;
+      }
+      .space {
+        margin-bottom: 1vw;
+      }
+      .hp-info {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+      }
+      .section.draggable {
+        padding-top: 10vw;
+        padding-right: 0;
+        padding-bottom: 5vw;
         background-color: #bdae8f;
       }
 
@@ -48,27 +95,35 @@
         padding-right: 4vw;
         padding-left: 4vw;
       }
-      .space-3.draggable {
-        padding-left: 4vw;
-      }
-
-      .space-3 {
-        margin-bottom: 3vw;
-      }
       .slider-wrap {
         position: relative;
       }
       .gallery-slider-w {
         position: relative;
       }
-      .slider1-wrap.slider-1,
-      .slider1-wrap.slider-single {
-        height: 40vw;
+      .cursor {
+        position: absolute;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        overflow: hidden;
+        width: 5vw;
+        height: 5vw;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        border-radius: 50%;
+        background-color: #9a8760;
       }
-
       .slider1-wrap {
         width: 100%;
-        height: 40vw;
+        height: 47vw;
       }
       .slider1-list {
         display: block;
@@ -79,6 +134,7 @@
         display: -webkit-flex;
         display: -ms-flexbox;
         display: flex;
+        height: 47vw;
         -webkit-box-orient: horizontal;
         -webkit-box-direction: normal;
         -webkit-flex-direction: row;
@@ -100,53 +156,93 @@
       }
       .slider1-item {
         width: auto;
+        height: 47vw;
       }
 
-      .slider1-item {
-        width: 100%;
-        height: 40vw;
-      }
-      .img-dr-w {
-        overflow: hidden;
-        height: 40vw;
-      }
-      .img-draggable {
-        width: auto;
-        height: 100%;
-        max-width: none;
+      .meta-wrapper.project.slider-1 {
+        padding-right: 4vw;
       }
 
-      img {
-        border: 0;
-        vertical-align: middle;
-        display: inline-block;
-        max-width: 100%;
+      .meta-wrapper.project {
+        border-bottom: 1px solid rgba(154, 135, 96, 0.2);
       }
-
-      .wrapper {
-        width: 80vw;
-        height: 300px;
-      }
-
-      @media screen and (max-width: 812px) {
-        .react-dat-gui {
-          display: none;
-        }
-      }
-
-      img {
-        pointer-events: none;
-      }
-
-      .s-4 {
-        position: relative;
+      .meta-wrapper {
         display: -webkit-box;
         display: -webkit-flex;
         display: -ms-flexbox;
         display: flex;
         width: 100%;
-        padding-top: 8vw;
-        padding-bottom: 8vw;
+        padding-top: 1.5vw;
+        padding-bottom: 1.5vw;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+      }
+      .slider-block {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+      }
+      .buttons-wrapper {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+      }
+      .slider-cap {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        margin-left: 2vw;
+      }
+      .slider-button {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        width: 3vw;
+        height: 3vw;
+        margin-right: 1vw;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        cursor: pointer;
+      }
+      .rel {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .slider-next,
+      .slider-prev {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        width: 0.9vw;
         -webkit-box-pack: center;
         -webkit-justify-content: center;
         -ms-flex-pack: center;
@@ -156,107 +252,9 @@
         -ms-flex-align: center;
         align-items: center;
       }
-      .s-wrap {
-        position: relative;
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-pack: start;
-        -webkit-justify-content: flex-start;
-        -ms-flex-pack: start;
-        justify-content: flex-start;
-      }
-      @media (min-width: 991px) {
-        .s-list {
-          white-space: nowrap;
-          display: block;
-        }
-      }
-
-      @media (min-width: 991px) {
-        .s-list {
-          will-change: transform;
-        }
-      }
-      .s-list {
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: flex;
-        height: 37.5vw;
-        margin-right: 3.5vw;
-        cursor: pointer;
-      }
-      @media (min-width: 991px) {
-        .s-item {
-          height: 100%;
-          display: inline;
-        }
-      }
-      .s-item {
-        display: block;
-        /* margin-left: 3.5vw; */
-      }
-      .s-img {
-        height: 40vw;
-      }
-      .slide-wrapper-relative {
-        width: calc(100vw);
-        height: calc(30vw);
-      }
-      .slider-button {
-        width: 3rem;
-        height: 3rem;
-      }
-      .buttons-wrapper {
-        width: 10rem;
-        display: flex;
-        justify-content: space-between;
-      }
-      .meta-wrapper {
-        max-width: calc(50vw);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0 1rem;
-      }
-      .multiple-slider-image {
-        height: 30vw;
-      }
-      .slide-image {
-        height: 100%;
-        background-repeat: no-repeat;
-        background-size: cover;
-      }
-
-      .cursor {
-        position: absolute;
-        display: block;
-        top: 0;
-        left: 0;
-        z-index: 999;
-        width: 8vw;
-        height: 8vw;
-        margin-top: calc(3.7vw - 2em);
-        margin-left: calc(3.7vw - 2em);
-        opacity: 0;
-        -webkit-transition: opacity 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-        transition: opacity 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-        pointer-events: none;
-      }
-      .cursor.cursor-show {
-        opacity: 1;
-      }
-      .cursor.cursor-show.cursor-active {
-        background-color: red;
-      }
-      .cursor-move-outer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+      .hp-list {
+        width: 46vw;
+        height: 46vw;
       }
     </style>
   </head>
@@ -264,202 +262,264 @@
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>
 
-    <div class="section dr">
-      <div class="space-3 draggable">
-        <h2 class="h-h2">Discover More</h2>
+    <div data-slider-id="sliderImages2" role="list" class="hp-list w-dyn-items">
+      <div role="listitem" class="hp-item w-dyn-item">
+        <a
+          aria-label="h-press"
+          draggable="false"
+          rel="noopener"
+          href="/press/the-design-vernacular"
+          class="hp-inner w-inline-block"
+        >
+          <div class="wrap">
+            <div
+              class="outer"
+              style="
+                transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
+                  skew(0deg, 0deg);
+                transform-style: preserve-3d;
+              "
+            >
+              <img
+                data-slider-image=""
+                loading="lazy"
+                alt="Boutique Design"
+                draggable="false"
+                src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg"
+                sizes="(max-width: 479px) 92vw, (max-width: 1919px) 43vw, 44vw"
+                srcset="
+                  https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0-p-800.jpeg 800w,
+                  https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg       825w
+                "
+                class="img"
+                style="
+                  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
+                    skew(0deg, 0deg);
+                  transform-style: preserve-3d;
+                "
+              />
+            </div>
+          </div>
+          <div class="hp-block">
+            <div class="space">
+              <div class="text overline">Boutique Design</div>
+            </div>
+            <div class="hp-info">
+              <h5 class="h5">'</h5>
+              <h5 class="h-h5">The Design Vernacular</h5>
+              <h5 class="h5">'</h5>
+            </div>
+          </div>
+        </a>
       </div>
-      <div class="slider-wrap">
-        <div class="gallery-slider-w">
-          <div id="cursor" class="cursor" style="display: none">
-            <div class="text big white">Drag</div>
-          </div>
-          <div
-            data-multi-slider-id="sliderImages1"
-            data-multi-slider-show-alt="0"
-            data-multi-slider-margin="2"
-            data-multi-slider-margin-mobile="4"
-            class="slider1-wrap slider-1 w-dyn-list"
-            style="/* display: none; */"
-          >
-            <script type="text/x-wf-template" id="wf-template-54f011e9-a0a3-c63d-ece8-7812ad6544e8">
-              %3Cdiv%20data-slider-image%3D%220%22%20role%3D%22listitem%22%20class%3D%22slider1-item%20slider-1%20w-dyn-item%20w-dyn-repeater-item%22%3E%3Cdiv%20id%3D%22img-item%22%20class%3D%22img-dr-w%22%3E%3Cimg%20src%3D%22https%3A%2F%2Fuploads-ssl.webflow.com%2F5f9952364896f7484e59450a%2F6075a28db0982f176cc8a0e6_13.jpeg%22%20loading%3D%22lazy%22%20draggable%3D%22false%22%20alt%3D%22Aster%20Hall%2C%20Chicago%2C%20Illinois%22%20class%3D%22img-draggable%22%2F%3E%3C%2Fdiv%3E%3C%2Fdiv%3E
-            </script>
-            <div role="list" class="slider1-list w-dyn-items">
-              <div data-slider-image="0" role="listitem" class="slider1-item slider-1 w-dyn-item w-dyn-repeater-item">
-                <div id="img-item" class="img-dr-w">
-                  <img
-                    src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a28db0982f176cc8a0e6_13.jpeg"
-                    loading="lazy"
-                    draggable="false"
-                    alt="Aster Hall, Chicago, Illinois"
-                    class="img-draggable"
-                  />
-                </div>
-              </div>
-              <div data-slider-image="0" role="listitem" class="slider1-item slider-1 w-dyn-item w-dyn-repeater-item">
-                <div id="img-item" class="img-dr-w">
-                  <img
-                    src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a295998b3617ebc5982e_20.jpeg"
-                    loading="lazy"
-                    draggable="false"
-                    alt="Nan Bai, San Fransisco, California"
-                    sizes="100vw"
-                    srcset="
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a295998b3617ebc5982e_20-p-500.jpeg 500w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a295998b3617ebc5982e_20.jpeg       685w
-                    "
-                    class="img-draggable"
-                  />
-                </div>
-              </div>
-              <div data-slider-image="0" role="listitem" class="slider1-item slider-1 w-dyn-item w-dyn-repeater-item">
-                <div id="img-item" class="img-dr-w">
-                  <img
-                    src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60631993f80d4245998e3a93_venue-3.jpeg"
-                    loading="lazy"
-                    draggable="false"
-                    alt="Aster Hall, Chicago, Illinois"
-                    sizes="100vw"
-                    srcset="
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60631993f80d4245998e3a93_venue-3-p-500.jpeg 500w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60631993f80d4245998e3a93_venue-3-p-800.jpeg 800w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60631993f80d4245998e3a93_venue-3.jpeg       811w
-                    "
-                    class="img-draggable"
-                  />
-                </div>
-              </div>
-              <div data-slider-image="0" role="listitem" class="slider1-item slider-1 w-dyn-item w-dyn-repeater-item">
-                <div id="img-item" class="img-dr-w">
-                  <img
-                    src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a2b9f885835b00c231d3_04.jpeg"
-                    loading="lazy"
-                    draggable="false"
-                    alt="Nan Bai, San Fransisco, California"
-                    sizes="100vw"
-                    srcset="
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a2b9f885835b00c231d3_04-p-500.jpeg   500w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a2b9f885835b00c231d3_04-p-1080.jpeg 1080w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6075a2b9f885835b00c231d3_04.jpeg        1318w
-                    "
-                    class="img-draggable"
-                  />
-                </div>
-              </div>
-              <div data-slider-image="0" role="listitem" class="slider1-item slider-1 w-dyn-item w-dyn-repeater-item">
-                <div id="img-item" class="img-dr-w">
-                  <img
-                    src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf3a8abead3224c00d5f_07.jpeg"
-                    loading="lazy"
-                    draggable="false"
-                    alt="Aster Hall, Chicago, Illinois"
-                    sizes="100vw"
-                    srcset="
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf3a8abead3224c00d5f_07-p-500.jpeg   500w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf3a8abead3224c00d5f_07-p-800.jpeg   800w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf3a8abead3224c00d5f_07-p-1080.jpeg 1080w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf3a8abead3224c00d5f_07-p-1600.jpeg 1600w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf3a8abead3224c00d5f_07.jpeg        3360w
-                    "
-                    class="img-draggable"
-                  />
-                </div>
-              </div>
-              <div data-slider-image="0" role="listitem" class="slider1-item slider-1 w-dyn-item w-dyn-repeater-item">
-                <div id="img-item" class="img-dr-w">
-                  <img
-                    src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf441131826f22d45df2_08.jpeg"
-                    loading="lazy"
-                    draggable="false"
-                    alt="Nan Bai, San Fransisco, California"
-                    sizes="100vw"
-                    srcset="
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf441131826f22d45df2_08-p-500.jpeg   500w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf441131826f22d45df2_08-p-1080.jpeg 1080w,
-                      https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6066cf441131826f22d45df2_08.jpeg        1370w
-                    "
-                    class="img-draggable"
-                  />
-                </div>
-              </div>
-              <div data-slider-image="0" role="listitem" class="slider1-item slider-1 w-dyn-item w-dyn-repeater-item">
-                <div id="img-item" class="img-dr-w">
-                  <img
-                    src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60648fd3ddb4b52e4ac5b225_12.jpeg"
-                    loading="lazy"
-                    draggable="false"
-                    alt="Aster Hall, Chicago, Illinois"
-                    class="img-draggable"
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="w-dyn-hide w-dyn-empty">
-              <div>No items found.</div>
+      <div role="listitem" class="hp-item w-dyn-item">
+        <a
+          aria-label="h-press"
+          draggable="false"
+          rel="noopener"
+          href="/press/the-design-vernacular"
+          class="hp-inner w-inline-block"
+        >
+          <div class="wrap">
+            <div
+              class="outer"
+              style="
+                transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
+                  skew(0deg, 0deg);
+                transform-style: preserve-3d;
+              "
+            >
+              <img
+                data-slider-image=""
+                loading="lazy"
+                alt="Boutique Design"
+                draggable="false"
+                src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg"
+                sizes="(max-width: 479px) 92vw, (max-width: 1919px) 43vw, 44vw"
+                srcset="
+                  https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0-p-800.jpeg 800w,
+                  https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg       825w
+                "
+                class="img"
+                style="
+                  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
+                    skew(0deg, 0deg);
+                  transform-style: preserve-3d;
+                "
+              />
             </div>
           </div>
-        </div>
-        <div class="meta-wrapper project slider-1">
-          <div class="sider-counter slider-1">
-            <div data-slider-current-index="sliderImages1" class="text slider-numb">05</div>
-            <div class="slider-div-w">
-              <div class="text slider-div">OF</div>
+          <div class="hp-block">
+            <div class="space">
+              <div class="text overline">Boutique</div>
             </div>
-            <div data-slider-last-index="sliderImages1" class="text slider-numb">07</div>
-          </div>
-          <div class="slider-block slider-1">
-            <div class="buttons-wrapper">
-              <div data-slider-button-prev="sliderImages1" class="slider-button slider-1">
-                <div class="rel">
-                  <div class="slider-prev w-embed">
-                    <svg class="slider-prev" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 12">
-                      <defs></defs>
-                      <path stroke="#2D2926" stroke-miterlimit="10" d="M13 6.33203L1.00011 6.33203"></path>
-                      <path
-                        stroke="#2D2926"
-                        stroke-linecap="square"
-                        stroke-miterlimit="10"
-                        d="M5.66797 1.66675L1.00134 6.33337L5.66797 11"
-                      ></path>
-                    </svg>
-                  </div>
-                  <div class="abs">
-                    <div class="circle-border w-embed">
-                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="my-svg">
-                        <circle cx="50" cy="50" r="48"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div data-slider-button-next="sliderImages1" class="slider-button slider-1">
-                <div class="rel">
-                  <div class="slider-next w-embed">
-                    <svg class="slider-next" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 12">
-                      <defs></defs>
-                      <path stroke="#2D2926" stroke-miterlimit="10" d="M0 5.66797L11.9999 5.66797"></path>
-                      <path
-                        stroke="#2D2926"
-                        stroke-linecap="square"
-                        stroke-miterlimit="10"
-                        d="M7.33203 10.3332L11.9987 5.66662L7.33203 1"
-                      ></path>
-                    </svg>
-                  </div>
-                  <div class="abs">
-                    <div class="circle-border w-embed">
-                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="my-svg">
-                        <circle cx="50" cy="50" r="48"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="hp-info">
+              <h5 class="h5">'</h5>
+              <h5 class="h-h5">The Design Vernacular</h5>
+              <h5 class="h5">'</h5>
             </div>
           </div>
-        </div>
+        </a>
+      </div>
+      <div role="listitem" class="hp-item w-dyn-item">
+        <a
+          aria-label="h-press"
+          draggable="false"
+          rel="noopener"
+          href="/press/the-design-vernacular"
+          class="hp-inner w-inline-block"
+        >
+          <div class="wrap">
+            <div
+              class="outer"
+              style="
+                transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
+                  skew(0deg, 0deg);
+                transform-style: preserve-3d;
+              "
+            >
+              <img
+                data-slider-image=""
+                loading="lazy"
+                alt="Boutique Design"
+                draggable="false"
+                src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg"
+                sizes="(max-width: 479px) 92vw, (max-width: 1919px) 43vw, 44vw"
+                srcset="
+                  https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0-p-800.jpeg 800w,
+                  https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg       825w
+                "
+                class="img"
+                style="
+                  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
+                    skew(0deg, 0deg);
+                  transform-style: preserve-3d;
+                "
+              />
+            </div>
+          </div>
+          <div class="hp-block">
+            <div class="space">
+              <div class="text overline">Boutique Design</div>
+            </div>
+            <div class="hp-info">
+              <h5 class="h5">'</h5>
+              <h5 class="h-h5">The Design</h5>
+              <h5 class="h5">'</h5>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
+
+    <div class="meta-wrapper project slider-1">
+      <div class="slider-block">
+        <div class="buttons-wrapper slider2">
+          <div class="arrows-embed w-embed">
+            <style>
+              .rel {
+                width: 100%;
+                height: 100%;
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              .abs {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: rotate(-90deg);
+              }
+              .my-svg {
+                opacity: 1;
+                transition: opacity 0.1s linear 0s;
+              }
+              .my-svg circle {
+                stroke: #9a8760;
+                stroke-width: 2px;
+                stroke-dasharray: 300;
+                stroke-dashoffset: 0;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                stroke-miterlimit: 10;
+                transition: stroke-dashoffset 0.7s ease-in-out;
+              }
+              .my-svg:hover {
+                opacity: 0;
+                transition: opacity 0.1s linear 0.9s;
+              }
+              .my-svg:hover circle {
+                stroke-dashoffset: 300;
+              }
+              .rel:hover .my-arrow {
+                opacity: 0.7;
+              }
+              .abs:hover .my-svg {
+                opacity: 0.7;
+              }
+            </style>
+          </div>
+          <div data-slider-button-prev="sliderImages2" class="slider-button">
+            <div class="rel">
+              <div class="slider-prev w-embed">
+                <svg class="slider-prev" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 12">
+                  <defs></defs>
+                  <path stroke="#2D2926" stroke-miterlimit="10" d="M13 6.33203L1.00011 6.33203"></path>
+                  <path
+                    stroke="#2D2926"
+                    stroke-linecap="square"
+                    stroke-miterlimit="10"
+                    d="M5.66797 1.66675L1.00134 6.33337L5.66797 11"
+                  ></path>
+                </svg>
+              </div>
+              <div class="abs">
+                <div class="circle-border w-embed">
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="my-svg">
+                    <circle cx="50" cy="50" r="48"></circle>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-slider-button-next="sliderImages2" class="slider-button">
+            <div class="rel">
+              <div class="slider-next w-embed">
+                <svg class="slider-next" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 12">
+                  <defs></defs>
+                  <path stroke="#2D2926" stroke-miterlimit="10" d="M0 5.66797L11.9999 5.66797"></path>
+                  <path
+                    stroke="#2D2926"
+                    stroke-linecap="square"
+                    stroke-miterlimit="10"
+                    d="M7.33203 10.3332L11.9987 5.66662L7.33203 1"
+                  ></path>
+                </svg>
+              </div>
+              <div class="abs">
+                <div class="circle-border w-embed">
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="my-svg">
+                    <circle cx="50" cy="50" r="48"></circle>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slider-cap" data-slider-desc="sliderImages2"></div>
+      </div>
+      <div class="sider-counter slider-2">
+        <div data-slider-current-index="sliderImages2" class="slider-numb"></div>
+        <div class="slider-div-w">
+          <div class="slider-div">OF</div>
+        </div>
+        <div data-slider-last-index="sliderImages2" class="slider-numb"></div>
+      </div>
+    </div>
+
     <!-- <script src="./runtime-main.b9a385e1.js"></script>
   <script src="./2.1a541cb8.chunk.js"></script>
   <script src="./main.9cfc15ca.chunk.js"></script> -->
