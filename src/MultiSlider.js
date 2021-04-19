@@ -1,14 +1,14 @@
-import { useRef, useEffect, useState, useCallback } from "react";
-import { useSprings, animated, useSpring } from "react-spring";
-import { useDrag } from "react-use-gesture";
-import useResizeObserver from "use-resize-observer";
+import { useRef, useEffect, useState, useCallback } from 'react'
+import { useSprings, animated, useSpring } from 'react-spring'
+import { useDrag } from 'react-use-gesture'
+import useResizeObserver from 'use-resize-observer'
 
 function easeOutExpo(x) {
-  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x)
 }
 function easeInExpo(x) {
-  return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
-  }
+  return x === 0 ? 0 : Math.pow(2, 10 * x - 10)
+}
 
 const defaultProps = {
   draggedScale: 1,
@@ -16,20 +16,20 @@ const defaultProps = {
   trailingSpring: { tension: 120, friction: 30 },
   releaseSpring: { tension: 120, friction: 30 },
   trailingDelay: 50
-};
+}
 
 // style for the slides wrapper
 const slidesWrapperStyle = () => ({
-  display: "flex",
-  flexWrap: "nowrap",
-  alignItems: "stretch",
-  position: "relative",
-  WebkitUserSelect: "none",
-  userSelect: "none",
-  WebkitTouchCallout: "none",
-  flexDirection: "row",
-  touchAction: "pan-y"
-});
+  display: 'flex',
+  flexWrap: 'nowrap',
+  alignItems: 'stretch',
+  position: 'relative',
+  WebkitUserSelect: 'none',
+  userSelect: 'none',
+  WebkitTouchCallout: 'none',
+  flexDirection: 'row',
+  touchAction: 'pan-y'
+})
 
 export default function Slider({
   children,
@@ -52,34 +52,33 @@ export default function Slider({
   onDragEnd,
   onTap
 }) {
-  const slideStyleFunc =
-    typeof slideStyle === "function" ? slideStyle : () => slideStyle;
+  const slideStyleFunc = typeof slideStyle === 'function' ? slideStyle : () => slideStyle
   // root holds are slides wrapper node and we use a ResizeObserver
   // to observe its size in order to recompute the slides position
   // when it changes
-  const root = useRef(null);
-  const { width, height } = useResizeObserver({ ref: root });
+  const root = useRef(null)
+  const { width, height } = useResizeObserver({ ref: root })
 
-  const axis = "x";
-  const size = width;
+  const axis = 'x'
+  const size = width
 
-  let [minIndex, maxIndex] = [0, children.length - 1];
-  maxIndex = maxIndex > 0 ? maxIndex : children.length - 1 + maxIndex;
+  let [minIndex, maxIndex] = [0, children.length - 1]
+  maxIndex = maxIndex > 0 ? maxIndex : children.length - 1 + maxIndex
 
   // indexRef is an internal reference to the current slide index
-  const indexRef = useRef(index);
+  const indexRef = useRef(index)
 
   // restPos holds a reference to the adjusted position of the slider
   // when rested
-  const restPos = useRef(0);
-  const velocity = useRef(0);
+  const restPos = useRef(0)
+  const velocity = useRef(0)
 
   // visibleIndexes is a Set holding the index of slides that are
   // currently partially or fully visible (intersecting) in the
   // viewport
-  const visibleIndexes = useRef(new Set());
-  const firstVisibleIndex = useRef(0);
-  const lastVisibleIndex = useRef(0);
+  const visibleIndexes = useRef(new Set())
+  const firstVisibleIndex = useRef(0)
+  const lastVisibleIndex = useRef(0)
 
   // instances holds a ref to an array of controllers
   // to simulate a spring trail. Mechanics is directly
@@ -91,35 +90,31 @@ export default function Slider({
   const marcello = useRef()
   const cb = (slides) => {
     slides.forEach(({ isIntersecting, target }) =>
-      visibleIndexes.current[isIntersecting ? "add" : "delete"](
-        Number(target.getAttribute("data-index"))
-      )
-    );
-    const visibles = Array.from(visibleIndexes.current).sort();
-    firstVisibleIndex.current = visibles[0];
-    lastVisibleIndex.current = visibles[visibles.length - 1];
+      visibleIndexes.current[isIntersecting ? 'add' : 'delete'](Number(target.getAttribute('data-index')))
+    )
+    const visibles = Array.from(visibleIndexes.current).sort()
+    firstVisibleIndex.current = visibles[0]
+    lastVisibleIndex.current = visibles[visibles.length - 1]
     if (marcello.current && marcello.current.children) {
       const children = Array.from(marcello.current.children)
-      children.forEach(child => (child.style.display = "flex"))
-      visibles.forEach(x => {
+      children.forEach((child) => (child.style.display = 'flex'))
+      visibles.forEach((x) => {
         if (children[x]) {
-          children[x].style.display = "none"
+          children[x].style.display = 'none'
         }
       })
     }
-  };
+  }
 
-  const observer = useRef(null);
+  const observer = useRef(null)
 
   // we add the slides to the IntersectionObserver:
   // this is recomputed everytime the user adds or removes a slide
   useEffect(() => {
-    if (!observer.current) observer.current = new IntersectionObserver(cb);
-    Array.from(root.current.children).forEach((t) =>
-      observer.current.observe(t)
-    );
-    return () => observer.current.disconnect();
-  }, [children.length, root]);
+    if (!observer.current) observer.current = new IntersectionObserver(cb)
+    Array.from(root.current.children).forEach((t) => observer.current.observe(t))
+    return () => observer.current.disconnect()
+  }, [children.length, root])
 
   // setting the springs with initial position set to restPos:
   // this is important when adding slides since changing children
@@ -130,9 +125,9 @@ export default function Slider({
       x: restPos.current,
       y: 0,
       zIndex: 0,
-      immediate: (key) => key === "zIndex"
-    };
-  });
+      immediate: (key) => key === 'zIndex'
+    }
+  })
 
   // everytime the index changes, we should calculate the right position
   // of the slide so that its centered: this is recomputed everytime
@@ -140,11 +135,11 @@ export default function Slider({
   useEffect(() => {
     // if width and height haven't been set don't do anything
     // (this happens on first render before useResizeObserver had the time to kick in)
-    if (!width || !height) return;
+    if (!width || !height) return
     // here we take the selected slide
     // and calculate its position so its centered in the slides wrapper
-    const { offsetLeft, offsetWidth } = root.current.children[index % (maxIndex+1)];
-    restPos.current = Math.round(-offsetLeft + (width - offsetWidth) / 2);
+    const { offsetLeft, offsetWidth } = root.current.children[index % (maxIndex + 1)]
+    restPos.current = Math.round(-offsetLeft + (width - offsetWidth) / 2)
     // two options then:
     // 1. the index was changed through gestures: in that case indexRef
     // is equal to index, we just want to set the position where it should
@@ -153,43 +148,29 @@ export default function Slider({
       set((_i) => ({
         [axis]: restPos.current,
         config: { ...releaseSpring, velocity: velocity.current }
-      }));
+      }))
     } else {
       // 2. the user has changed the index props: in that case indexRef
       // is outdated and different from index. We want to animate depending
       // on the direction of the slide, with the furthest slide moving first
       // trailing the others
 
-      const dir = index < indexRef.current ? -1 : 1;
+      const dir = index < indexRef.current ? -1 : 1
       // if direction is 1 then the first slide to animate should be the lowest
       // indexed visible slide, if -1 the highest
-      const firstToMove =
-        dir > 0 ? firstVisibleIndex.current : lastVisibleIndex.current;
+      const firstToMove = dir > 0 ? firstVisibleIndex.current : lastVisibleIndex.current
       set((i) => {
         return {
           [axis]: restPos.current,
           // config: key => key === axis && releaseSpring,
           config: releaseSpring,
-          delay:
-            i * dir < firstToMove * dir
-              ? 0
-              : Math.abs(firstToMove - i) * trailingDelay
-        };
-      });
+          delay: i * dir < firstToMove * dir ? 0 : Math.abs(firstToMove - i) * trailingDelay
+        }
+      })
     }
     // finally we update indexRef to match index
-    indexRef.current = index;
-  }, [
-    index,
-    set,
-    root,
-    axis,
-    height,
-    width,
-    releaseSpring,
-    draggedSpring,
-    trailingDelay
-  ]);
+    indexRef.current = index
+  }, [index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay])
 
   // adding the bind listener
   const bind = useDrag(
@@ -206,13 +187,13 @@ export default function Slider({
       memo = springs[pressedIndex][axis].get()
     }) => {
       if (tap) {
-        onTap && onTap(pressedIndex);
-        return;
+        onTap && onTap(pressedIndex)
+        return
       }
-      const v = vx;
-      const dir = -Math.sign(dx);
-      const mov = movX;
-      const swipe = sx;
+      const v = vx
+      const dir = -Math.sign(dx)
+      const mov = movX
+      const swipe = sx
 
       if (first) {
         // if this is the first drag event, we're trailing the controllers
@@ -220,16 +201,13 @@ export default function Slider({
         set((i) => {
           return {
             [axis]: memo + mov,
-            config: (key) =>
-              key === axis && i === pressedIndex
-                ? draggedSpring
-                : trailingSpring,
+            config: (key) => (key === axis && i === pressedIndex ? draggedSpring : trailingSpring),
             zIndex: i === pressedIndex ? 10 : 0
-          };
-        });
+          }
+        })
 
         // triggering onDragStart prop if it exists
-        onDragStart && onDragStart(pressedIndex);
+        onDragStart && onDragStart(pressedIndex)
       } else if (last) {
         // when the user releases the drag and the distance or speed are superior to a threshold
         // we update the indexRef
@@ -252,8 +230,8 @@ export default function Slider({
         // too fast: that might happen if the user wants to update a slide onClick
         // TODO - need an example
         if (index !== indexRef.current) {
-          velocity.current = v;
-          requestAnimationFrame(() => onIndexChange(indexRef.current));
+          velocity.current = v
+          requestAnimationFrame(() => onIndexChange(indexRef.current))
         }
         // if the index hasn't changed then we set the position back to where it should be
         else
@@ -261,43 +239,36 @@ export default function Slider({
             [axis]: restPos.current,
             // config: key => key === axis && releaseSpring,
             config: releaseSpring
-          }));
+          }))
 
         // triggering onDragEnd prop if it exists
-        onDragEnd && onDragEnd(pressedIndex);
+        onDragEnd && onDragEnd(pressedIndex)
       }
 
       // if not we're just dragging and we're just updating the position
       else {
-        const firstToMove =
-          dir > 0 ? firstVisibleIndex.current : lastVisibleIndex.current;
+        const firstToMove = dir > 0 ? firstVisibleIndex.current : lastVisibleIndex.current
         set((i) => {
           return {
             [axis]: mov + memo,
-            delay:
-              i * dir < firstToMove * dir || i === pressedIndex
-                ? 0
-                : Math.abs(firstToMove - i) * trailingDelay,
-            config: (key) =>
-              key === axis && i === pressedIndex
-                ? draggedSpring
-                : trailingSpring
-          };
-        });
+            delay: i * dir < firstToMove * dir || i === pressedIndex ? 0 : Math.abs(firstToMove - i) * trailingDelay,
+            config: (key) => (key === axis && i === pressedIndex ? draggedSpring : trailingSpring)
+          }
+        })
       }
 
       // and returning memo to keep the initial position in cache along drag
-      return memo;
+      return memo
     },
     { axis, filterTaps: true }
-  );
+  )
 
-  const rootStyle = slidesWrapperStyle();
-  if (!className) rootStyle.width = "100%";
+  const rootStyle = slidesWrapperStyle()
+  if (!className) rootStyle.width = '100%'
 
   const [{ scale }, animateScale] = useSpring(() => ({
     from: { scale: 0 },
-    config: { duration: 1000 },
+    config: { duration: 1000 }
   }))
   const ease = useRef(easeOutExpo)
   const onPointerDown = useCallback(() => {
@@ -305,7 +276,7 @@ export default function Slider({
     ease.current = easeOutExpo
     animateScale({
       from: { scale: 0 },
-      to: { scale: 1 },
+      to: { scale: 1 }
     })
   }, [ease, animateScale, noDrag])
   const onPointerUp = useCallback(() => {
@@ -313,7 +284,7 @@ export default function Slider({
     ease.current = easeInExpo
     animateScale({
       from: { scale: 1 },
-      to: { scale: 0 },
+      to: { scale: 0 }
     })
   }, [ease, animateScale, noDrag])
 
@@ -328,45 +299,44 @@ export default function Slider({
           data-index={i}
           className={slideClassName}
           style={{
-            alignItems: "center",
-            display: "flex",
-            flexFlow: "column nowrap",
+            alignItems: 'center',
+            display: 'flex',
+            flexFlow: 'column nowrap',
             ...slideStyleFunc(i),
             zIndex,
             [axis]: pos,
-            willChange: "transform",
+            willChange: 'transform',
             margin: `0 ${margin}vw`
-          }}
-        >
+          }}>
           <animated.div
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
             style={{
-              transform: scale.to(x => `scaleY(${1 - draggedScale * ease.current(x)})`),
-              overflow: "hidden",
-              transformStyle: "preserve-3d",
-              willChange: "transform",
-            }}
-            >
-          <animated.div
-            ref={marcello}
-            style={{
-              transform: scale.to(x =>  `scale(${1 + draggedScale * ease.current(x)}, ${1 + 2 * draggedScale * ease.current(x)})`),
-              willChange: "transform",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            {children[i]}
+              transform: scale.to((x) => `scaleY(${1 - draggedScale * ease.current(x)})`),
+              overflow: 'hidden',
+              transformStyle: 'preserve-3d',
+              willChange: 'transform'
+            }}>
+            <animated.div
+              ref={marcello}
+              style={{
+                transform: scale.to(
+                  (x) => `scale(${1 + draggedScale * ease.current(x)}, ${1 + 2 * draggedScale * ease.current(x)})`
+                ),
+                willChange: 'transform',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transformStyle: 'preserve-3d'
+              }}>
+              {children[i]}
+            </animated.div>
           </animated.div>
-        </animated.div>
-        {descs[i] && <div className="multi-slider-alt" >{descs[i]}</div>}
+          {descs[i] && <div className="multi-slider-alt">{descs[i]}</div>}
         </animated.div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-Slider.defaultProps = defaultProps;
+Slider.defaultProps = defaultProps
