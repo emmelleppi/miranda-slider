@@ -78,21 +78,34 @@ export default function MultiSlider({
         : [],
     [showAlts, imagesTags]
   )
-
+  
+  const [widths, setWidths] = useState()
   useEffect(() => {
     const maxWidth = imagesTags.reduce((acc, x, i) => {
-      const { width } = x.getBoundingClientRect()
-      if (width > acc) {
-        return width
+      const img = x.getElementsByTagName("img")
+      if (img && img[0]) {
+        const { width } = img[0].getBoundingClientRect()
+        if (width > acc) {
+          return width
+        }
       }
       return acc
     }, 0)
+    const maxWidths = imagesTags.map((x) => {
+      const aaaa = x.getElementsByTagName("img")
+      if (aaaa && aaaa[0]) {
+        const { width } = aaaa[0].getBoundingClientRect()
+        return `${width}px`
+      }
+      return 0
+    })
+    setWidths(maxWidths)
     setStyle({
-      width: '10vw',
-      margin: `0 auto 0 ${(maxWidth / 3) + window.innerWidth * (isMobile ? marginMobile : margin)/100}px`,
+      width: `${maxWidth}px`,
+      margin: `0 0 0 ${window.innerWidth * (isMobile ? marginMobile : margin)/100}px`,
     })
     domContent.style.display = 'none'
-  }, [imagesTags, isMobile, noDrag, setStyle, domContent, marginMobile, margin])
+  }, [setWidths, imagesTags, isMobile, noDrag, setStyle, domContent, marginMobile, margin])
 
   useEffect(() => {
     if (currentIndex) {
@@ -209,7 +222,7 @@ export default function MultiSlider({
             transform: cursorSpring.xy.to(trans)
           }}></animated.div>
       )}
-      {style && (
+      {style && widths.length > 0 &&(
         <Slider
           index={index}
           noDrag={noDrag}
@@ -218,6 +231,7 @@ export default function MultiSlider({
           realLength={realLength}
           className={domContent.className}
           style={style}
+          widths={widths}
           slideStyle={(i) => itemsStyle[i]}
           loaded={loaded}
           // slideClassName="multiple-slider-image"

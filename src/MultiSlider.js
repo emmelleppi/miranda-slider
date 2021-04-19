@@ -41,6 +41,7 @@ export default function Slider({
   onIndexChange,
   className,
   style,
+  widths,
   slideStyle,
   slideClassName,
   draggedScale,
@@ -264,7 +265,6 @@ export default function Slider({
   )
 
   const rootStyle = slidesWrapperStyle()
-  if (!className) rootStyle.width = '100%'
 
   const [{ scale }, animateScale] = useSpring(() => ({
     from: { scale: 0 },
@@ -289,7 +289,7 @@ export default function Slider({
   }, [ease, animateScale, noDrag])
 
   return (
-    <div ref={root} className={className} style={{ ...rootStyle, ...style }}>
+    <div ref={root} className={className} style={{ ...rootStyle, ...style, width: widths ? widths[index] : "0px",   transition: "width 0.5s"  }}>
       {springs.map(({ [axis]: pos, zIndex }, i) => (
         <animated.div
           // passing the index as an argument will let our handler know
@@ -302,6 +302,7 @@ export default function Slider({
             alignItems: 'center',
             display: 'flex',
             flexFlow: 'column nowrap',
+            alignItems: 'center',
             ...slideStyleFunc(i),
             zIndex,
             [axis]: pos,
