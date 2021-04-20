@@ -27,7 +27,7 @@ export default function MultiSlider({
   const domContent = domEl
   const [imagesTags, realLength] = useMemo(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
-    return [new Array(6).fill(array).flatMap((x) => x), array.length]
+    return [new Array(2).fill(array).flatMap((x) => x), array.length]
   }, [domContent])
 
   const [index, setIndex] = useState(0)
