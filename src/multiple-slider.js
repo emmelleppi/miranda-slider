@@ -25,10 +25,23 @@ export default function MultiSlider({
   lastIndex
 }) {
   const domContent = domEl
-  const [imagesTags, realLength] = useMemo(() => {
+  const [[imagesTags, realLength, domItemsLength]] = useState(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
-    return [new Array(2).fill(array).flatMap((x) => x), array.length]
-  }, [domContent])
+    const realLength = array.length
+    if (array[0]) {
+      array.push(array[0])
+    }
+    if (array[1]) {
+      array.push(array[1])
+    }
+    if (array[2]) {
+      array.push(array[2])
+    }
+    if (array[3]) {
+      array.push(array[3])
+    }
+    return [array, array.length, realLength]
+  })
 
   const [index, setIndex] = useState(0)
   const [style, setStyle] = useState()
@@ -85,32 +98,40 @@ export default function MultiSlider({
       margin: `0 0 0 ${(window.innerWidth * (isMobile ? marginMobile : margin)) / 100}px`
     })
     domContent.style.display = 'none'
+    domContent.innerHTML = ""
   }, [imagesTags, isMobile, noDrag, setStyle, domContent, marginMobile, margin])
 
   useEffect(() => {
     if (currentIndex) {
-      const curr = (index + 1) % realLength === 0 ? realLength : (index + 1) % realLength
+      const curr = (index + 1) % domItemsLength === 0 ? domItemsLength : (index + 1) % domItemsLength
       currentIndex.innerHTML = curr > 9 ? `${curr}` : `0${curr}`
     }
-  }, [loaded, setLoaded, index, currentIndex, realLength])
+  }, [loaded, setLoaded, index, currentIndex, domItemsLength])
 
   useEffect(() => {
-    const callback = () =>
+    const callback = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
       setIndex((s) => {
         const curr = s - 1
         if (curr < 0) {
-          return imagesTags.length - 1
+          return domItemsLength - 1 
         }
         return curr
       })
+    }
     if (buttonPrev) {
       buttonPrev.addEventListener('click', callback)
       return () => buttonPrev.removeEventListener('click', callback)
     }
-  }, [buttonPrev, setIndex, imagesTags])
+  }, [buttonPrev, setIndex, domItemsLength])
 
   useEffect(() => {
-    const callback = () => setIndex((s) => s + 1)
+    const callback = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      setIndex((s) => s + 1)
+    }
     if (buttonNext) {
       buttonNext.addEventListener('click', callback)
       return () => buttonNext.removeEventListener('click', callback)
@@ -119,9 +140,9 @@ export default function MultiSlider({
 
   useEffect(() => {
     if (lastIndex) {
-      lastIndex.innerHTML = realLength > 9 ? `${realLength}` : `0${realLength}`
+      lastIndex.innerHTML = domItemsLength > 9 ? `${domItemsLength}` : `0${domItemsLength}`
     }
-  }, [lastIndex, realLength])
+  }, [lastIndex, domItemsLength])
 
   const father = useRef()
   const [x, setX] = useState(0)
@@ -209,6 +230,7 @@ export default function MultiSlider({
           descs={descs}
           margin={_margin}
           realLength={realLength}
+          domItemsLength={domItemsLength}
           className={domContent.className}
           style={style}
           slideStyle={(i) => itemsStyle[i]}

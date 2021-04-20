@@ -38,6 +38,7 @@ export default function Slider({
   descs,
   margin,
   onIndexChange,
+  domItemsLength,
   className,
   style,
   slideStyle,
@@ -61,7 +62,7 @@ export default function Slider({
   const axis = 'x'
   const size = width
 
-  let [, maxIndex] = [0, children.length - 1]
+  let [, maxIndex] = [0, domItemsLength - 1]
   maxIndex = maxIndex > 0 ? maxIndex : children.length - 1 + maxIndex
 
   // indexRef is an internal reference to the current slide index

@@ -10,7 +10,7 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
 
   const domContent = domEl
 
-  const { items, classes, desc, content } = useMemo(() => {
+  const [{ items, classes, desc, content }] = useState(() => {
     const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
     const items = imagesTags.map((x) => {
       let obj = {}
@@ -27,8 +27,10 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
     const classes = imagesTags.map((x) => x.className)
     const desc = imagesTags.map((el) => el.getAttribute('alt'))
     const content = Array.from(domContent.querySelectorAll('[data-slider-image-content]'))
+    domContent.style.display = 'none'
+    domContent.innerHTML = ""
     return { items, classes, desc, content }
-  }, [domContent])
+  })
 
   const idx = useCallback((x, l = items.length) => (x < 0 ? x + l : x) % l, [items])
   const getPos = useCallback((i, firstVis, firstVisIdx) => idx(i - firstVis + firstVisIdx), [idx])
@@ -103,7 +105,9 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
   }, [loaded, content, setLoaded, active, descEl, desc])
 
   useEffect(() => {
-    const callback = () => {
+    const callback = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
       index.current += -1
       runSprings(0, -1, true, -0, () => {}, -0)
     }
@@ -114,7 +118,9 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
   }, [buttonPrev, runSprings])
 
   useEffect(() => {
-    const callback = () => {
+    const callback = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
       index.current += 1
       runSprings(0, 1, true, -0, () => {}, -0)
     }

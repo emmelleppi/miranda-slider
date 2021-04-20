@@ -5,7 +5,6 @@ import MultiSlider from './multiple-slider'
 window.onload = () => {
   const nodeElements = document.querySelectorAll('[data-slider-id]')
   Array.from(nodeElements).forEach((el) => {
-    el.style.display = 'none'
     const id = el.getAttribute('data-slider-id')
     const sliderWrapper = document.createElement('div')
     el.after(sliderWrapper)
