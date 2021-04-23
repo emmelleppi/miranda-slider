@@ -104,7 +104,7 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
     const linkEl = document.getElementById(`slider-link-${id}`)
     const attributes = links[active - 1]
     if (linkEl && attributes) {
-      Array.from(attributes).forEach(({name, value}) => name!=="class" && linkEl.setAttribute(name, value))
+      Array.from(attributes).forEach(({name, value}) => linkEl.setAttribute(name, value))
     }
   }, [active, id, links])
 
