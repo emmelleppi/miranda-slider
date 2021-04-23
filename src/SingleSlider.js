@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useSprings, animated } from 'react-spring'
 import { formatStringToCamelCase } from './utils'
 
-export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
+export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
   const father = useRef()
   const [width, setWidth] = useState(window.innerWidth)
   const [active, setActive] = useState(1)
@@ -10,8 +10,9 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
 
   const domContent = domEl
 
-  const [{ items, classes, desc, content }] = useState(() => {
+  const [{ items, classes, desc, content, links }] = useState(() => {
     const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
+    const links = Array.from(domContent.getElementsByTagName('a')).map(x => x.attributes)
     const items = imagesTags.map((x) => {
       let obj = {}
       for (let i = 0; i < x.style.length; i++) {
@@ -29,7 +30,7 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
     const content = Array.from(domContent.querySelectorAll('[data-slider-image-content]'))
     domContent.style.display = 'none'
     domContent.innerHTML = ""
-    return { items, classes, desc, content }
+    return { items, classes, desc, content, links }
   })
 
   const idx = useCallback((x, l = items.length) => (x < 0 ? x + l : x) % l, [items])
@@ -80,6 +81,32 @@ export default function SingleSlider({ descEl, domEl, buttonPrev, buttonNext, cu
     },
     [idx, getPos, width, visible, set, items.length]
   )
+
+  useEffect(() => {
+    const linkEl = document.getElementById(`slider-link-${id}`)
+    let element = father.current 
+    if (!linkEl && links && links.length > 0 && element) {
+      let parent = element.parentNode;
+      while (descEl && !parent.contains(descEl)) {
+        element = parent 
+        parent = parent.parentNode;
+      }
+      element = parent 
+      parent = parent.parentNode;
+      const wrapper = document.createElement('a');
+      wrapper.id = `slider-link-${id}`
+      parent.replaceChild(wrapper, element);
+      wrapper.appendChild(element);
+    }
+  }, [id, links, descEl])
+
+  useEffect(() => {
+    const linkEl = document.getElementById(`slider-link-${id}`)
+    const attributes = links[active - 1]
+    if (linkEl && attributes) {
+      Array.from(attributes).forEach(({name, value}) => name!=="class" && linkEl.setAttribute(name, value))
+    }
+  }, [active, id, links])
 
   useEffect(() => {
     if (!loaded[active - 1]) {

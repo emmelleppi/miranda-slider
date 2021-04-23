@@ -245,7 +245,7 @@ export default function MultiSlider({
           {imagesTags.map((el, i) => (
             <div
               style={{
-                pointerEvents: 'none'
+                pointerEvents: noDrag ? "auto" : 'none'
               }}
               key={i}
               onClick={() => handleClick(i)}

@@ -15,6 +15,7 @@ window.onload = () => {
     const lastIndex = document.querySelectorAll(`[data-slider-last-index="${id}"]`)?.[0]
     render(
       <SingleSlider
+        id={id}
         domEl={el}
         descEl={descEl}
         buttonPrev={buttonPrev}
