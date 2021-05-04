@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react'
-import { useSprings, animated, useSpring } from 'react-spring'
+import { useSprings, animated, useSpring, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import useResizeObserver from 'use-resize-observer'
 
@@ -12,9 +12,9 @@ function easeInExpo(x) {
 
 const defaultProps = {
   draggedScale: 1,
-  draggedSpring: { tension: 1200, friction: 40 },
-  trailingSpring: { tension: 120, friction: 30 },
-  releaseSpring: { tension: 120, friction: 30 },
+  draggedSpring: config.molasses,
+  trailingSpring: config.molasses,
+  releaseSpring: config.molasses,
   trailingDelay: 50
 }
 
@@ -267,7 +267,7 @@ export default function Slider({
 
   const [{ scale }, animateScale] = useSpring(() => ({
     from: { scale: 0 },
-    config: { duration: 1000 }
+    config: { duration: 1500 }
   }))
   const ease = useRef(easeOutExpo)
   const onPointerDown = useCallback(() => {

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useSprings, animated } from 'react-spring'
+import { useSprings, animated, config } from 'react-spring'
+import { useGesture } from 'react-use-gesture'
 import { formatStringToCamelCase } from './utils'
 
-export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
+export default function SingleSlider({ switchInterval, id, descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
   const father = useRef()
   const [width, setWidth] = useState(window.innerWidth)
   const [active, setActive] = useState(1)
@@ -37,16 +38,26 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
   const getPos = useCallback((i, firstVis, firstVisIdx) => idx(i - firstVis + firstVisIdx), [idx])
   // Important only if specifyng width, centers the element in the slider
   const offset = 0
-  const [springs, set] = useSprings(items.length, (i) => ({ x: (i < items.length - 1 ? i : -1) * width + offset }))
+  const [springs, set] = useSprings(items.length, (i) => ({
+    x: (i < items.length - 1 ? i : -1) * width + offset, 
+    config: config.molasses
+  }))
   const prev = useRef([0, 1])
   const index = useRef(0)
+  const isDragging = useRef(false)
   const runSprings = useCallback(
-    (y, vy, down, xDir, cancel, xMove) => {
+    (y, vy, down, xDir, cancel, xMove, distance, fromButton) => {
       // This decides if we move over to the next slide or back to the initial
-      if (!down) {
-        index.current += ((-xMove + (width + xMove)) / width) * (xDir > 0 ? -1 : 1)
-        // cancel()
+      if (!fromButton) {
+        isDragging.current = true
+        if (down && (distance > width / 2 || Math.abs(vy) > 1)) {
+          cancel((index.current = index.current + (xDir > 0 ? -1 : 1)))
+        }
+      } else {
+        isDragging.current = false
       }
+      console.log(isDragging.current)
+
       if (index.current + 1 > items.length) {
         setActive((index.current % items.length) + 1)
       } else if (index.current < 0) {
@@ -54,6 +65,7 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
       } else {
         setActive(index.current + 1)
       }
+      
       // The actual scrolling value
       const finalY = index.current * width
       // Defines currently visible slides
@@ -74,13 +86,21 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
           // this defines if the movement is immediate
           // So when an item is moved from one end to the other we don't
           // see it moving
-          immediate: vy < 0 ? prevPosition > position : prevPosition < position
+          immediate: vy < 0 ? prevPosition > position : prevPosition < position,
+          config: config.molasses
         }
       })
       prev.current = [firstVis, firstVisIdx]
     },
     [idx, getPos, width, visible, set, items.length]
   )
+
+  const bind = useGesture({
+    onDrag: ({ event, offset: [x], vxvy: [vx], down, direction: [xDir], cancel, distance, movement: [xMove] }) => {
+      vx && runSprings(-x, -vx, down, xDir, cancel, xMove, distance)
+    }
+  }, 
+  { delay: 90 })
 
   useEffect(() => {
     const linkEl = document.getElementById(`slider-link-${id}`)
@@ -94,6 +114,14 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
       element = parent 
       parent = parent.parentNode;
       const wrapper = document.createElement('a');
+      wrapper.addEventListener("click", e => {
+          e.preventDefault()
+          setTimeout(() => {
+            if (!isDragging.current) {
+              dispatchEvent(e)
+            }
+          }, 100)
+      })
       wrapper.id = `slider-link-${id}`
       parent.replaceChild(wrapper, element);
       wrapper.appendChild(element);
@@ -136,7 +164,7 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
       e.stopPropagation()
       e.preventDefault()
       index.current += -1
-      runSprings(0, -1, true, -0, () => {}, -0)
+      runSprings(0, -1, true, -0, () => {}, -0, 0, true)
     }
     if (buttonPrev) {
       buttonPrev.addEventListener('click', callback)
@@ -149,7 +177,7 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
       e.stopPropagation()
       e.preventDefault()
       index.current += 1
-      runSprings(0, 1, true, -0, () => {}, -0)
+      runSprings(0, 1, true, -0, () => {}, -0, 0, true)
     }
     if (buttonNext) {
       buttonNext.addEventListener('click', callback)
@@ -168,10 +196,22 @@ export default function SingleSlider({ id, descEl, domEl, buttonPrev, buttonNext
     }
   }, [lastIndex, items])
 
+  useEffect(() => {
+    if (switchInterval && switchInterval > 0) {
+      const callback = () => {
+        index.current += 1
+        runSprings(0, 1, true, -0, () => {}, -0)
+      }
+      const idInterval = setInterval(callback, switchInterval)
+      return () => clearInterval(idInterval)
+    }
+  }, [switchInterval, runSprings])
+
   return (
     <div
       ref={father}
       className={domContent.className}
+      {...bind()}
       style={{
         position: 'relative',
         overflow: 'hidden'

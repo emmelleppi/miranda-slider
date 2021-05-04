@@ -46,7 +46,7 @@ export default function MultiSlider({
   const [index, setIndex] = useState(0)
   const [style, setStyle] = useState()
 
-  const draggedScale = 0.1
+  const draggedScale = 0.05
   const trailingDelay = 0
   const draggedSpring = 'stiff'
   const trailingSpring = 'stiff'

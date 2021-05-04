@@ -7,6 +7,7 @@ window.onload = () => {
   Array.from(nodeElements).forEach((el) => {
     const id = el.getAttribute('data-slider-id')
     const sliderWrapper = document.createElement('div')
+    const switchInterval = el.getAttribute('data-slider-switch-interval')
     el.after(sliderWrapper)
     const descEl = document.querySelectorAll(`[data-slider-desc="${id}"]`)?.[0]
     const buttonPrev = document.querySelectorAll(`[data-slider-button-prev="${id}"]`)?.[0]
@@ -16,6 +17,7 @@ window.onload = () => {
     render(
       <SingleSlider
         id={id}
+        switchInterval={switchInterval ? parseInt(switchInterval, 10) : null}
         domEl={el}
         descEl={descEl}
         buttonPrev={buttonPrev}
