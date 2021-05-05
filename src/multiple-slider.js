@@ -15,11 +15,14 @@ const springOptions = {
 export default function MultiSlider({
   margin,
   marginMobile,
+  noInfinite,
   noDrag,
+  centered,
   showAlts,
   cursor,
   domEl,
   buttonPrev,
+  noInnerScale,
   buttonNext,
   currentIndex,
   lastIndex
@@ -28,17 +31,19 @@ export default function MultiSlider({
   const [[imagesTags, realLength, domItemsLength]] = useState(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
     const realLength = array.length
-    if (array[0]) {
-      array.push(array[0])
-    }
-    if (array[1]) {
-      array.push(array[1])
-    }
-    if (array[2]) {
-      array.push(array[2])
-    }
-    if (array[3]) {
-      array.push(array[3])
+    if (!centered) {
+      if (array[0]) {
+        array.push(array[0])
+      }
+      if (array[1]) {
+        array.push(array[1])
+      }
+      if (array[2]) {
+        array.push(array[2])
+      }
+      if (array[3]) {
+        array.push(array[3])
+      }
     }
     return [array, array.length, realLength]
   })
@@ -48,9 +53,6 @@ export default function MultiSlider({
 
   const draggedScale = 0.05
   const trailingDelay = 0
-  const draggedSpring = 'stiff'
-  const trailingSpring = 'stiff'
-  const releaseSpring = 'default'
   const [loaded, setLoaded] = useState({})
 
   const handleClick = useCallback(
@@ -95,7 +97,7 @@ export default function MultiSlider({
   useEffect(() => {
     setStyle({
       width: `10vw`,
-      margin: `0 0 0 ${(window.innerWidth * (isMobile ? marginMobile : margin)) / 100}px`
+      // margin: `0 0 0 ${(window.innerWidth * (isMobile ? marginMobile : margin)) / 100}px`
     })
     domContent.style.display = 'none'
     domContent.innerHTML = ""
@@ -112,31 +114,54 @@ export default function MultiSlider({
     const callback = (e) => {
       e.stopPropagation()
       e.preventDefault()
-      setIndex((s) => {
-        const curr = s - 1
-        if (curr < 0) {
-          return domItemsLength - 1 
-        }
-        return curr
-      })
+      if ((noInfinite && index > 0) || !noInfinite) {
+        setIndex((s) => {
+          const curr = s - 1
+          if (curr < 0) {
+            return domItemsLength - 1 
+          }
+          return curr
+        })
+      }
     }
     if (buttonPrev) {
       buttonPrev.addEventListener('click', callback)
       return () => buttonPrev.removeEventListener('click', callback)
     }
-  }, [buttonPrev, setIndex, domItemsLength])
+  }, [buttonPrev, setIndex, domItemsLength, noInfinite, index])
 
   useEffect(() => {
     const callback = (e) => {
       e.stopPropagation()
       e.preventDefault()
-      setIndex((s) => s + 1)
+      if ((noInfinite && index < domItemsLength-1) || !noInfinite) {
+        setIndex((s) => s + 1)
+      }
     }
     if (buttonNext) {
       buttonNext.addEventListener('click', callback)
       return () => buttonNext.removeEventListener('click', callback)
     }
-  }, [buttonNext, setIndex])
+  }, [buttonNext, domItemsLength, index, noInfinite, setIndex])
+
+  useEffect(() => {
+    if (noInfinite) {
+      if (buttonPrev) {
+        if (index === 0) {
+          buttonPrev.classList.add('disabled')
+        } else {
+          buttonPrev.classList.remove('disabled')
+        }
+      }
+      if (buttonNext) {
+        if (index === domItemsLength-1) {
+          buttonNext.classList.add('disabled')
+        } else {
+          buttonNext.classList.remove('disabled')
+        }
+      }
+    }
+  }, [noInfinite, index, buttonPrev, buttonNext, domItemsLength])
 
   useEffect(() => {
     if (lastIndex) {
@@ -227,6 +252,9 @@ export default function MultiSlider({
         <Slider
           index={index}
           noDrag={noDrag}
+          centered={centered}
+          noInfinite={noInfinite}
+          noInnerScale={noInnerScale}
           descs={descs}
           margin={_margin}
           realLength={realLength}
@@ -239,9 +267,7 @@ export default function MultiSlider({
           onIndexChange={setIndex}
           trailingDelay={trailingDelay}
           draggedScale={draggedScale}
-          draggedSpring={springOptions[draggedSpring]}
-          trailingSpring={springOptions[trailingSpring]}
-          releaseSpring={springOptions[releaseSpring]}>
+          >
           {imagesTags.map((el, i) => (
             <div
               style={{

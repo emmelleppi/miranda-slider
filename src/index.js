@@ -8,6 +8,7 @@ window.onload = () => {
     const id = el.getAttribute('data-slider-id')
     const sliderWrapper = document.createElement('div')
     const switchInterval = el.getAttribute('data-slider-switch-interval')
+    const noInfinite = el.hasAttribute('data-slider-no-infinite')
     el.after(sliderWrapper)
     const descEl = document.querySelectorAll(`[data-slider-desc="${id}"]`)?.[0]
     const buttonPrev = document.querySelectorAll(`[data-slider-button-prev="${id}"]`)?.[0]
@@ -17,7 +18,8 @@ window.onload = () => {
     render(
       <SingleSlider
         id={id}
-        switchInterval={switchInterval ? parseInt(switchInterval, 10) : null}
+        switchInterval={switchInterval && !noInfinite ? parseInt(switchInterval, 10) : null}
+        noInfinite={noInfinite}
         domEl={el}
         descEl={descEl}
         buttonPrev={buttonPrev}
@@ -34,8 +36,11 @@ window.onload = () => {
     const id = el.getAttribute('data-multi-slider-id')
     const showAlts = el.hasAttribute('data-multi-slider-show-alt')
     const noDrag = el.hasAttribute('data-multi-slider-no-drag')
+    const noInfinite = el.hasAttribute('data-slider-no-infinite')
     const margin = el.getAttribute('data-multi-slider-margin')
     const marginMobile = el.getAttribute('data-multi-slider-margin-mobile')
+    const noInnerScale = el.hasAttribute('data-slider-no-inner-scale')
+    const centered = el.hasAttribute('data-multi-slider-centered')
     const sliderWrapper = document.createElement('div')
     const cursor = document.getElementsByClassName('cursor')[0]
     el.after(sliderWrapper)
@@ -45,7 +50,10 @@ window.onload = () => {
     const lastIndex = document.querySelectorAll(`[data-slider-last-index="${id}"]`)?.[0]
     render(
       <MultiSlider
+        centered={centered}
         noDrag={noDrag}
+        noInfinite={noInfinite}
+        noInnerScale={noInnerScale}
         margin={margin ? parseInt(margin, 10) : 0}
         marginMobile={marginMobile ? parseInt(marginMobile, 10) : 0}
         showAlts={showAlts}

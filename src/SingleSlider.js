@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useSprings, animated, config } from 'react-spring'
+import { useSprings, animated } from 'react-spring'
 import { useGesture } from 'react-use-gesture'
 import { formatStringToCamelCase } from './utils'
 
-export default function SingleSlider({ switchInterval, id, descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
+export default function SingleSlider({ noInfinite, switchInterval, id, descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
   const father = useRef()
   const [width, setWidth] = useState(window.innerWidth)
   const [active, setActive] = useState(1)
@@ -40,31 +40,31 @@ export default function SingleSlider({ switchInterval, id, descEl, domEl, button
   const offset = 0
   const [springs, set] = useSprings(items.length, (i) => ({
     x: (i < items.length - 1 ? i : -1) * width + offset, 
-    config: config.molasses
   }))
   const prev = useRef([0, 1])
   const index = useRef(0)
-  const isDragging = useRef(false)
+
   const runSprings = useCallback(
     (y, vy, down, xDir, cancel, xMove, distance, fromButton) => {
       // This decides if we move over to the next slide or back to the initial
       if (!fromButton) {
-        isDragging.current = true
         if (down && (distance > width / 2 || Math.abs(vy) > 1)) {
-          cancel((index.current = index.current + (xDir > 0 ? -1 : 1)))
+          if (!noInfinite || (noInfinite && ((active > 1 && xDir > 0) || (active < items.length && xDir < 0)))) {
+            cancel((index.current = index.current + (xDir > 0 ? -1 : 1)))
+          } else {
+            cancel()
+          }
         }
-      } else {
-        isDragging.current = false
       }
-      console.log(isDragging.current)
 
-      if (index.current + 1 > items.length) {
-        setActive((index.current % items.length) + 1)
-      } else if (index.current < 0) {
-        setActive(items.length + ((index.current + 1) % items.length))
-      } else {
-        setActive(index.current + 1)
-      }
+        if (index.current + 1 > items.length) {
+          setActive((index.current % items.length) + 1)
+        } else if (index.current < 0) {
+          setActive(items.length + ((index.current + 1) % items.length))
+        } else {
+          setActive(index.current + 1)
+        }
+
       
       // The actual scrolling value
       const finalY = index.current * width
@@ -87,20 +87,26 @@ export default function SingleSlider({ switchInterval, id, descEl, domEl, button
           // So when an item is moved from one end to the other we don't
           // see it moving
           immediate: vy < 0 ? prevPosition > position : prevPosition < position,
-          config: config.molasses
         }
       })
       prev.current = [firstVis, firstVisIdx]
     },
-    [idx, getPos, width, visible, set, items.length]
+    [noInfinite, active, items.length, width, idx, visible, set, getPos]
   )
 
   const bind = useGesture({
-    onDrag: ({ event, offset: [x], vxvy: [vx], down, direction: [xDir], cancel, distance, movement: [xMove] }) => {
-      vx && runSprings(-x, -vx, down, xDir, cancel, xMove, distance)
+    onDrag: ({ offset: [x], vxvy: [vx], down, direction: [xDir], cancel, distance, movement: [xMove], tap }) => {
+      if (tap) {
+        const linkEl = document.getElementById(`slider-link-${id}`)
+        if (linkEl.href && linkEl.href.length > 0) {
+          window.location.href = linkEl.href;
+        }
+      }
+      if (vx) {
+          runSprings(-x, -vx, down, xDir, cancel, xMove, distance)
+        }
     }
-  }, 
-  { delay: 90 })
+  }, { filterTaps: true })
 
   useEffect(() => {
     const linkEl = document.getElementById(`slider-link-${id}`)
@@ -114,19 +120,20 @@ export default function SingleSlider({ switchInterval, id, descEl, domEl, button
       element = parent 
       parent = parent.parentNode;
       const wrapper = document.createElement('a');
-      wrapper.addEventListener("click", e => {
-          e.preventDefault()
-          setTimeout(() => {
-            if (!isDragging.current) {
-              dispatchEvent(e)
-            }
-          }, 100)
-      })
       wrapper.id = `slider-link-${id}`
       parent.replaceChild(wrapper, element);
       wrapper.appendChild(element);
     }
   }, [id, links, descEl])
+
+  useEffect(() => {
+    const linkEl = document.getElementById(`slider-link-${id}`)
+    if (linkEl) {
+      const callback = e => e.preventDefault()
+      linkEl.addEventListener("click", callback)
+      return () => linkEl.removeEventListener("click", callback)
+    }
+  }, [id])
 
   useEffect(() => {
     const linkEl = document.getElementById(`slider-link-${id}`)
@@ -160,30 +167,53 @@ export default function SingleSlider({ switchInterval, id, descEl, domEl, button
   }, [loaded, content, setLoaded, active, descEl, desc])
 
   useEffect(() => {
-    const callback = (e) => {
-      e.stopPropagation()
-      e.preventDefault()
-      index.current += -1
-      runSprings(0, -1, true, -0, () => {}, -0, 0, true)
+    if (noInfinite) {
+      if (buttonPrev) {
+        if (active === 1) {
+          buttonPrev.classList.add('disabled')
+        } else {
+          buttonPrev.classList.remove('disabled')
+        }
+      }
+      if (buttonNext) {
+        if (active === items.length) {
+          buttonNext.classList.add('disabled')
+        } else {
+          buttonNext.classList.remove('disabled')
+        }
+      }
     }
+  }, [noInfinite, active, buttonPrev, buttonNext, items.length])
+
+  useEffect(() => {
     if (buttonPrev) {
+      const callback = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        if ((noInfinite && active > 1) || !noInfinite) {
+          index.current += -1
+          runSprings(0, -1, true, -0, () => {}, -0, 0, true)
+        }
+      }
       buttonPrev.addEventListener('click', callback)
       return () => buttonPrev.removeEventListener('click', callback)
     }
-  }, [buttonPrev, runSprings])
+  }, [noInfinite, active, buttonPrev, runSprings])
 
   useEffect(() => {
-    const callback = (e) => {
-      e.stopPropagation()
-      e.preventDefault()
-      index.current += 1
-      runSprings(0, 1, true, -0, () => {}, -0, 0, true)
-    }
     if (buttonNext) {
+      const callback = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        if (!noInfinite || (active < items.length && noInfinite)) {
+          index.current += 1
+          runSprings(0, 1, true, -0, () => {}, -0, 0, true)
+        }
+      }
       buttonNext.addEventListener('click', callback)
       return () => buttonNext.removeEventListener('click', callback)
     }
-  }, [buttonNext, runSprings])
+  }, [noInfinite, active, buttonNext, runSprings, items.length])
 
   useEffect(() => {
     const { width } = father.current.getBoundingClientRect()
@@ -241,9 +271,6 @@ export default function SingleSlider({ switchInterval, id, descEl, domEl, button
                 style={{
                   ...items[i],
                   pointerEvents: 'none',
-                  willChange: 'transform',
-                  overflow: 'hidden',
-                  transform: x.to((x) => `translate3d(${x / 4}px,0,0)`)
                 }}
               />
             )}

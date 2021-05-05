@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="theme-color" content="#000000" />
+    <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <link href="./styles.css" rel="stylesheet" />
+    <title>React App</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        overscroll-behavior-y: contain;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        user-select: none;
+        font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto,
+          noto, segoe ui, arial, sans-serif;
+      }
+      .hp-col {
+    position: relative;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+.slider-block.home-slider {
+    position: absolute;
+    left: auto;
+    top: auto;
+    right: 2vw;
+    bottom: 0;
+    z-index: 99;
+    margin-left: 2vw;
+}
+
+.slider-block {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.buttons-wrapper {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+.slider-button {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width: 3vw;
+    height: 3vw;
+    margin-right: 1vw;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    cursor: pointer;
+}
+.rel {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .abs {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: rotate(-90deg);
+    }
+
+    .my-svg {
+        opacity: 1;
+        transition: opacity 0.1s linear 0s;
+    }
+
+    .rel:hover .my-arrow {
+        opacity: 0.7;
+    }
+
+    .abs:hover .my-svg {
+        opacity: 0.7;
+    }
+
+    .my-svg circle {
+        stroke: #9a8760;
+        stroke-width: 2px;
+        stroke-dasharray: 300;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        transition: stroke-dashoffset 0.7s ease-in-out;
+    }
+
+    .my-svg:not(.active) circle {
+        stroke-dashoffset: 0;
+    }
+
+    .my-svg:not(.active-back) circle {
+        stroke-dashoffset: 0;
+    }
+
+    .my-svg:hover {
+        opacity: 0;
+        transition: opacity 0.1s linear 0.9s;
+    }
+
+    /*
+🚨🚨🚨 DA QUI IN POI 🚨🚨🚨
+Devi rimpiazzare gli stili
+- .my-svg:hover circle
+- .my-svg.active circle
+- .my-svg.active-back circle
+
+con questi nuovi
+*/
+    [data-slider-button-prev] .my-svg:hover circle {
+        stroke-dashoffset: 40;
+    }
+
+    [data-slider-button-next] .my-svg:hover circle {
+        stroke-dashoffset: -40;
+    }
+
+    [data-slider-button-prev] .my-svg.active circle {
+        stroke-dashoffset: 600;
+        transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    [data-slider-button-next] .my-svg.active circle {
+        stroke-dashoffset: -600;
+        transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    [data-slider-button-prev] .my-svg.active-back circle {
+        stroke-dashoffset: 0;
+        transition: stroke-dashoffset 0s ease-in-out;
+    }
+
+    [data-slider-button-next] .my-svg.active-back circle {
+        stroke-dashoffset: 0;
+        transition: stroke-dashoffset 0s ease-in-out;
+    }
+
+    @media screen and (max-width: 991px) {
+        .rel:hover .my-arrow {
+            opacity: 1;
+        }
+
+        .abs:hover .my-svg {
+            opacity: 1;
+        }
+
+        .my-svg:hover {
+            opacity: 1;
+        }
+
+        [data-slider-button-prev] .my-svg:hover circle {
+            stroke-dashoffset: 0;
+        }
+
+        [data-slider-button-next] .my-svg:hover circle {
+            stroke-dashoffset: 0;
+        }
+
+        [data-slider-button-prev] .my-svg.active circle {
+            stroke-dashoffset: 600;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        [data-slider-button-next] .my-svg.active circle {
+            stroke-dashoffset: -600;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        [data-slider-button-prev] .my-svg.active-back circle {
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0s ease-in-out;
+        }
+
+        [data-slider-button-next] .my-svg.active-back circle {
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0s ease-in-out;
+        }
+    }
+    .hp-grid {
+    overflow: hidden;
+    width: 100%;
+    height: 40vw;
+}
+.hp-inner {
+    width: 43.5vw;
+    margin-bottom: 2vw;
+}
+
+.w-inline-block {
+    max-width: 100%;
+    display: inline-block;
+}
+a {
+    background-color: transparent;
+    color: #2d2926;
+    text-decoration: none;
+}
+.wrap.home-slider {
+    height: 33.5vw;
+}
+
+.wrap {
+    overflow: hidden;
+}
+.outer {
+    overflow: hidden;
+    -webkit-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+}
+.img.home-slider {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.img.home-slider {
+    width: auto;
+    height: 100%;
+    max-width: none;
+}
+.img {
+    width: 100%;
+}
+img {
+    border: 0;
+    vertical-align: middle;
+    display: inline-block;
+    max-width: 100%;
+}
+
+[data-slider-button-prev].disabled > * {
+   pointer-events: none !important;
+   opacity: 0.7 !important;
+}
+[data-slider-button-next].disabled > * {
+   pointer-events: none !important;
+   opacity: 0.7 !important;
+}
+    </style>
+  </head>
+
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+
+    <div class="hp-col">
+      <div class="slider-block home-slider">
+         <div class="buttons-wrapper">
+            <div data-slider-button-prev="home-slider" class="slider-button slider-1">
+               <div class="rel">
+                  <div class="slider-prev w-embed">
+                     <svg class="slider-prev" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 12">
+                        <defs></defs>
+                        <path stroke="#2D2926" stroke-miterlimit="10" d="M13 6.33203L1.00011 6.33203"></path>
+                        <path stroke="#2D2926" stroke-linecap="square" stroke-miterlimit="10" d="M5.66797 1.66675L1.00134 6.33337L5.66797 11"></path>
+                     </svg>
+                  </div>
+                  <div class="abs">
+                     <div class="circle-border w-embed">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="my-svg">
+                           <circle cx="50" cy="50" r="48"></circle>
+                        </svg>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div data-slider-button-next="home-slider" class="slider-button slider-single">
+               <div class="rel">
+                  <div class="slider-next w-embed">
+                     <svg class="slider-next" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 12">
+                        <defs></defs>
+                        <path stroke="#2D2926" stroke-miterlimit="10" d="M0 5.66797L11.9999 5.66797"></path>
+                        <path stroke="#2D2926" stroke-linecap="square" stroke-miterlimit="10" d="M7.33203 10.3332L11.9987 5.66662L7.33203 1"></path>
+                     </svg>
+                  </div>
+                  <div class="abs">
+                     <div class="circle-border w-embed">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="my-svg">
+                           <circle cx="50" cy="50" r="48"></circle>
+                        </svg>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div data-slider-id="home-slider" class="hp-grid w-dyn-list" data-slider-no-infinite="" data-slider-switch-interval="0">
+         <div role="list" class="hp-list w-dyn-items">
+            <div role="listitem" class="hp-item w-dyn-item">
+               <a aria-label="h-press" draggable="false" rel="noopener" href="/press/the-design-vernacular-2" class="hp-inner w-inline-block">
+                  <div class="wrap home-slider">
+                     <div class="outer" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"><img loading="lazy" alt="Boutique Design" data-slider-image="0" draggable="false" src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg" sizes="(max-width: 479px) 92vw, 100vw" srcset="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0-p-800.jpeg 800w, https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/60548b92fbcef6526298a58c_h-press-0.jpeg 825w" class="img home-slider" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"></div>
+                  </div>
+                  <div data-slider-image-content="0" class="hp-block">
+                     <div class="space">
+                        <div class="text overline">Boutique Design</div>
+                     </div>
+                     <div class="hp-info">
+                        <h5 class="h5">'</h5>
+                        <h5 class="h-h5">The Design Vernacular</h5>
+                        <h5 class="h5">'</h5>
+                     </div>
+                  </div>
+               </a>
+            </div>
+            <div role="listitem" class="hp-item w-dyn-item">
+               <a aria-label="h-press" draggable="false" rel="noopener" href="/press/press-09" class="hp-inner w-inline-block">
+                  <div class="wrap home-slider">
+                     <div class="outer" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"><img loading="lazy" alt="Category Title" data-slider-image="0" draggable="false" src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6062f0cc52cae3279e6eb626_press-3.jpeg" class="img home-slider" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"></div>
+                  </div>
+                  <div data-slider-image-content="0" class="hp-block">
+                     <div class="space">
+                        <div class="text overline">Category Title</div>
+                     </div>
+                     <div class="hp-info">
+                        <h5 class="h5">'</h5>
+                        <h5 class="h-h5">Press  09</h5>
+                        <h5 class="h5">'</h5>
+                     </div>
+                  </div>
+               </a>
+            </div>
+            <div role="listitem" class="hp-item w-dyn-item">
+               <a aria-label="h-press" draggable="false" rel="noopener" href="/press/press-08" class="hp-inner w-inline-block">
+                  <div class="wrap home-slider">
+                     <div class="outer" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"><img loading="lazy" alt="Boutique Design" data-slider-image="0" draggable="false" src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6062f0ab0351e751c57b3652_press-2.jpeg" class="img home-slider" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"></div>
+                  </div>
+                  <div data-slider-image-content="0" class="hp-block">
+                     <div class="space">
+                        <div class="text overline">Boutique Design</div>
+                     </div>
+                     <div class="hp-info">
+                        <h5 class="h5">'</h5>
+                        <h5 class="h-h5">Press 08</h5>
+                        <h5 class="h5">'</h5>
+                     </div>
+                  </div>
+               </a>
+            </div>
+            <div role="listitem" class="hp-item w-dyn-item">
+               <a aria-label="h-press" draggable="false" rel="noopener" href="/press/press-07" class="hp-inner w-inline-block">
+                  <div class="wrap home-slider">
+                     <div class="outer" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"><img loading="lazy" alt="Boutique Design" data-slider-image="0" draggable="false" src="https://uploads-ssl.webflow.com/5f9952364896f7484e59450a/6062f0af277b150dcbaa4b84_press-1.jpeg" class="img home-slider" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"></div>
+                  </div>
+                  <div data-slider-image-content="0" class="hp-block">
+                     <div class="space">
+                        <div class="text overline">Boutique Design</div>
+                     </div>
+                     <div class="hp-info">
+                        <h5 class="h5">'</h5>
+                        <h5 class="h-h5">Press 07</h5>
+                        <h5 class="h5">'</h5>
+                     </div>
+                  </div>
+               </a>
+            </div>
+         </div>
+      </div>
+      <div class="w-embed">
+         <div data-slider-desc="home-slider"></div>
+      </div>
+   </div>
+
+    <!-- <script src="./runtime-main.b9a385e1.js"></script>
+  <script src="./2.1a541cb8.chunk.js"></script>
+  <script src="./main.9cfc15ca.chunk.js"></script> -->
+  </body>
+</html>

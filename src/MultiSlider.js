@@ -12,9 +12,9 @@ function easeInExpo(x) {
 
 const defaultProps = {
   draggedScale: 1,
-  draggedSpring: config.molasses,
-  trailingSpring: config.molasses,
-  releaseSpring: config.molasses,
+  draggedSpring: config.default,
+  trailingSpring: config.default,
+  releaseSpring: config.default,
   trailingDelay: 50
 }
 
@@ -34,9 +34,11 @@ const slidesWrapperStyle = () => ({
 export default function Slider({
   children,
   index,
-  noDrag,
+  noInfinite,
+  noInnerScale,
   descs,
   margin,
+  centered,
   onIndexChange,
   domItemsLength,
   className,
@@ -138,8 +140,8 @@ export default function Slider({
     if (!width || !height) return
     // here we take the selected slide
     // and calculate its position so its centered in the slides wrapper
-    const { offsetLeft } = root.current.children[index % (maxIndex + 1)]
-    restPos.current = Math.round(-offsetLeft) // + (width - offsetWidth) / 2)
+    const { offsetLeft, offsetWidth } = root.current.children[index % (maxIndex + 1)]
+    restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
     // two options then:
     // 1. the index was changed through gestures: in that case indexRef
     // is equal to index, we just want to set the position where it should
@@ -194,6 +196,10 @@ export default function Slider({
       const dir = -Math.sign(dx)
       const mov = movX
       const swipe = sx
+      
+      if ((noInfinite && ((index === 0 && mov > 0) || (index === domItemsLength-1 && mov < 0)))) {
+        return
+      }
 
       if (first) {
         // if this is the first drag event, we're trailing the controllers
@@ -243,6 +249,13 @@ export default function Slider({
 
         // triggering onDragEnd prop if it exists
         onDragEnd && onDragEnd(pressedIndex)
+        if (!noInnerScale) {
+          ease.current = easeInExpo
+          animateScale({
+            from: { scale: 1 },
+            to: { scale: 0 }
+          })
+        }
       }
 
       // if not we're just dragging and we're just updating the position
@@ -271,41 +284,42 @@ export default function Slider({
   }))
   const ease = useRef(easeOutExpo)
   const onPointerDown = useCallback(() => {
-    if (noDrag) return
+    if (noInnerScale) return
     ease.current = easeOutExpo
     animateScale({
       from: { scale: 0 },
       to: { scale: 1 }
     })
-  }, [ease, animateScale, noDrag])
+  }, [ease, animateScale, noInnerScale])
   const onPointerUp = useCallback(() => {
-    if (noDrag) return
+    if (noInnerScale) return
     ease.current = easeInExpo
     animateScale({
       from: { scale: 1 },
       to: { scale: 0 }
     })
-  }, [ease, animateScale, noDrag])
+  }, [ease, animateScale, noInnerScale])
+  
 
   return (
-    <div ref={root} className={className} style={{ ...rootStyle, ...style }}>
+    <div ref={root} className={className} style={{ ...rootStyle, ...style, ...(centered && {margin: "0 auto"}) }}>
       {springs.map(({ [axis]: pos, zIndex }, i) => (
         <animated.div
           // passing the index as an argument will let our handler know
           // which slide is being dragged
-          {...(!noDrag && bind(i))}
+          {...bind(i)}
           key={i}
           data-index={i}
           className={slideClassName}
           style={{
             display: 'flex',
             flexFlow: 'column nowrap',
-            alignItems: 'flex-start',
+            alignItems: centered ? "center" : 'flex-start',
             ...slideStyleFunc(i),
             zIndex,
             [axis]: pos,
             willChange: 'transform',
-            margin: `0 ${margin}vw`
+            margin: `0 ${margin}vw 0 0`
           }}>
           <animated.div
             onPointerDown={onPointerDown}
