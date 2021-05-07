@@ -1,3 +1,4 @@
+import { clamp } from 'lodash-es'
 import { useRef, useEffect, useCallback } from 'react'
 import { useSprings, animated, useSpring, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
@@ -35,6 +36,7 @@ export default function Slider({
   children,
   index,
   noInfinite,
+  realLength,
   noInnerScale,
   descs,
   margin,
@@ -137,7 +139,7 @@ export default function Slider({
   useEffect(() => {
     // if width and height haven't been set don't do anything
     // (this happens on first render before useResizeObserver had the time to kick in)
-    if (!width || !height) return
+    if (!width || !height || !root.current.children[index]) return
     // here we take the selected slide
     // and calculate its position so its centered in the slides wrapper
     const { offsetLeft, offsetWidth } = root.current.children[index]
@@ -147,7 +149,7 @@ export default function Slider({
     // is equal to index, we just want to set the position where it should
     
     if (indexRef.current === index) {
-      if (domItemsLength <= index && index < 2 * domItemsLength) {
+      if ((domItemsLength <= index && index < 2 * domItemsLength)) {
 
         set((_i) => ({
           [axis]: restPos.current,
@@ -160,6 +162,7 @@ export default function Slider({
           [axis]: restPos.current,
           config: { ...releaseSpring, velocity: velocity.current },
           onRest: () => {
+            if (!centered && noInfinite) return
             const aaa = domItemsLength + (index % domItemsLength)
             if (!root.current.children[aaa]) return
             const { offsetLeft, offsetWidth } = root.current.children[aaa]
@@ -189,6 +192,7 @@ export default function Slider({
           config: releaseSpring,
           delay: i * dir < firstToMove * dir ? 0 : Math.abs(firstToMove - i) * trailingDelay,
           onRest: () => {
+            if (!centered && noInfinite) return
             if (!(domItemsLength <= index && index < 2 * domItemsLength)) {
               const aaa = domItemsLength + (index % domItemsLength)
               if (!root.current.children[aaa]) return
@@ -207,8 +211,17 @@ export default function Slider({
     }
     // finally we update indexRef to match index
     indexRef.current = index
-  }, [maxIndex, index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay, centered, domItemsLength, onIndexChange])
+  }, [maxIndex, index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay, centered, domItemsLength, onIndexChange, noInfinite])
 
+  useEffect(() => {
+    const { offsetLeft, offsetWidth } = root.current.children[indexRef.current]
+    restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
+    set((_i) => ({
+      [axis]: restPos.current,
+      immediate: true,
+    }))
+  }, [centered, set, width])
+  
   // adding the bind listener
   const bind = useDrag(
     ({
@@ -253,18 +266,17 @@ export default function Slider({
         // when the user releases the drag and the distance or speed are superior to a threshold
         // we update the indexRef
         if (Math.abs(mov) > size / 2 || swipe !== 0) {
-          indexRef.current += (mov > 0 ? -1 : 1)
           // if (curr < 0) {
           //   indexRef.current = maxIndex
           // } else {
           //   indexRef.current = Math.max(0, curr % (maxIndex + 1))
           // }
 
-          // indexRef.current = clamp(
-          //   indexRef.current + (mov > 0 ? -1 : 1),
-          //   minIndex,
-          //   maxIndex
-          // );
+          indexRef.current = clamp(
+            indexRef.current + (mov > 0 ? -1 : 1),
+            0,
+            realLength
+          );
         }
         // if the index is not equal to indexRef we know we've moved a slide
         // so we tell the user to update its index in the next tick and our useEffect

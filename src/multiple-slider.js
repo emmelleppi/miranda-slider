@@ -27,17 +27,32 @@ export default function MultiSlider({
   currentIndex,
   lastIndex
 }) {
+  const isMobile = window.innerWidth <= 991
   const domContent = domEl
   const [[imagesTags, realLength, domItemsLength]] = useState(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
     const realLength = array.length
-    if (noInfinite) {
+    if (noInfinite && !centered) {
+      if (window.innerWidth > 479) {
+        if (array[0]) {
+          array.push(array[0])
+        }
+        if (array[1]) {
+          array.push(array[1])
+        }
+        if (array[2]) {
+          array.push(array[2])
+        }
+        if (array[3]) {
+          array.push(array[3])
+        }
+      }
       return [array, array.length, realLength]
     }
     return [[...array,...array,...array], 3 * array.length, realLength]
   })
 
-  const [index, setIndex] = useState(noInfinite ? 0:domItemsLength )
+  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength )
   const [style, setStyle] = useState()
 
   const draggedScale = 0.05
@@ -53,7 +68,6 @@ export default function MultiSlider({
     [index, setIndex]
   )
 
-  const isMobile = window.innerWidth <= 991
   const _margin = useMemo(() => (isMobile ? marginMobile : margin), [margin, marginMobile, isMobile])
 
   const itemsStyle = useMemo(
@@ -107,7 +121,7 @@ export default function MultiSlider({
         setIndex((s) => {
           const curr = s - 1
           if (curr < 0) {
-            return domItemsLength - 1 
+            return 0 
           }
           return curr
         })
@@ -124,14 +138,20 @@ export default function MultiSlider({
       e.stopPropagation()
       e.preventDefault()
       if ((noInfinite && index < domItemsLength-1) || !noInfinite) {
-        setIndex((s) => s + 1)
+        setIndex((s) => {
+          const next = s + 1
+          if (next >= realLength) {
+            return s
+          }
+          return next
+        })
       }
     }
     if (buttonNext) {
       buttonNext.addEventListener('click', callback)
       return () => buttonNext.removeEventListener('click', callback)
     }
-  }, [buttonNext, domItemsLength, index, noInfinite, setIndex])
+  }, [buttonNext, domItemsLength, index, noInfinite, realLength, setIndex])
 
   useEffect(() => {
     if (noInfinite) {
@@ -260,7 +280,8 @@ export default function MultiSlider({
           {imagesTags.map((el, i) => (
             <div
               style={{
-                pointerEvents: noDrag ? "auto" : 'none'
+                pointerEvents: noDrag ? "auto" : 'none',
+                opacity: i >= domItemsLength && window.innerWidth < 479 && noInfinite && !centered ? 0 : 1 
               }}
               key={i}
               onClick={() => handleClick(i)}
