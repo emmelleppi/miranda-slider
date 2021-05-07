@@ -140,17 +140,38 @@ export default function Slider({
     if (!width || !height) return
     // here we take the selected slide
     // and calculate its position so its centered in the slides wrapper
-    const { offsetLeft, offsetWidth } = root.current.children[index % (maxIndex + 1)]
+    const { offsetLeft, offsetWidth } = root.current.children[index]
     restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
     // two options then:
     // 1. the index was changed through gestures: in that case indexRef
     // is equal to index, we just want to set the position where it should
-
+    
     if (indexRef.current === index) {
-      set((_i) => ({
-        [axis]: restPos.current,
-        config: { ...releaseSpring, velocity: velocity.current }
-      }))
+      if (domItemsLength <= index && index < 2 * domItemsLength) {
+
+        set((_i) => ({
+          [axis]: restPos.current,
+          config: { ...releaseSpring, velocity: velocity.current }
+        }))
+
+      } else {
+
+        set((_i) => ({
+          [axis]: restPos.current,
+          config: { ...releaseSpring, velocity: velocity.current },
+          onRest: () => {
+            const aaa = domItemsLength + (index % domItemsLength)
+            if (!root.current.children[aaa]) return
+            const { offsetLeft, offsetWidth } = root.current.children[aaa]
+            restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
+            set((_i) => ({
+              [axis]: restPos.current,
+              immediate: true,
+            }))
+            onIndexChange(aaa)
+          }
+        }))
+      }
     } else {
       // 2. the user has changed the index props: in that case indexRef
       // is outdated and different from index. We want to animate depending
@@ -166,13 +187,27 @@ export default function Slider({
           [axis]: restPos.current,
           // config: key => key === axis && releaseSpring,
           config: releaseSpring,
-          delay: i * dir < firstToMove * dir ? 0 : Math.abs(firstToMove - i) * trailingDelay
+          delay: i * dir < firstToMove * dir ? 0 : Math.abs(firstToMove - i) * trailingDelay,
+          onRest: () => {
+            if (!(domItemsLength <= index && index < 2 * domItemsLength)) {
+              const aaa = domItemsLength + (index % domItemsLength)
+              if (!root.current.children[aaa]) return
+              const { offsetLeft, offsetWidth } = root.current.children[aaa]
+              restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
+              set((_i) => ({
+                [axis]: restPos.current,
+                immediate: true,
+              }))
+              onIndexChange(aaa)
+              indexRef.current = aaa
+            }
+          }
         }
       })
     }
     // finally we update indexRef to match index
     indexRef.current = index
-  }, [maxIndex, index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay])
+  }, [maxIndex, index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay, centered, domItemsLength, onIndexChange])
 
   // adding the bind listener
   const bind = useDrag(
@@ -218,12 +253,13 @@ export default function Slider({
         // when the user releases the drag and the distance or speed are superior to a threshold
         // we update the indexRef
         if (Math.abs(mov) > size / 2 || swipe !== 0) {
-          const curr = indexRef.current + (mov > 0 ? -1 : 1)
-          if (curr < 0) {
-            indexRef.current = maxIndex
-          } else {
-            indexRef.current = Math.max(0, curr % (maxIndex + 1))
-          }
+          indexRef.current += (mov > 0 ? -1 : 1)
+          // if (curr < 0) {
+          //   indexRef.current = maxIndex
+          // } else {
+          //   indexRef.current = Math.max(0, curr % (maxIndex + 1))
+          // }
+
           // indexRef.current = clamp(
           //   indexRef.current + (mov > 0 ? -1 : 1),
           //   minIndex,

@@ -31,24 +31,13 @@ export default function MultiSlider({
   const [[imagesTags, realLength, domItemsLength]] = useState(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
     const realLength = array.length
-    if (!centered) {
-      if (array[0]) {
-        array.push(array[0])
-      }
-      if (array[1]) {
-        array.push(array[1])
-      }
-      if (array[2]) {
-        array.push(array[2])
-      }
-      if (array[3]) {
-        array.push(array[3])
-      }
+    if (noInfinite) {
+      return [array, array.length, realLength]
     }
-    return [array, array.length, realLength]
+    return [[...array,...array,...array], 3 * array.length, realLength]
   })
 
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(noInfinite ? 0:domItemsLength )
   const [style, setStyle] = useState()
 
   const draggedScale = 0.05
