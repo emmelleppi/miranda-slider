@@ -1,19 +1,40 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSprings, animated } from 'react-spring'
 import { useGesture } from 'react-use-gesture'
 import { formatStringToCamelCase } from './utils'
 
-export default function SingleSlider({ noInfinite, switchInterval, id, descEl, domEl, buttonPrev, buttonNext, currentIndex, lastIndex, visible = 1 }) {
+export default function SingleSlider({
+  noInfinite,
+  switchInterval,
+  id,
+  descEl,
+  domEl,
+  buttonPrev,
+  buttonNext,
+  currentIndex,
+  lastIndex,
+  mass = 1,
+  tension = 70,
+  friction = 26,
+  visible = 1
+}) {
   const father = useRef()
   const [width, setWidth] = useState(window.innerWidth)
   const [active, setActive] = useState(1)
   const [loaded, setLoaded] = useState({})
-
+  const config = useMemo(
+    () => ({
+      mass,
+      tension,
+      friction
+    }),
+    [mass, tension, friction]
+  )
   const domContent = domEl
 
   const [{ items, classes, desc, content, links }] = useState(() => {
     const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
-    const links = Array.from(domContent.getElementsByTagName('a')).map(x => x.attributes)
+    const links = Array.from(domContent.getElementsByTagName('a')).map((x) => x.attributes)
     const items = imagesTags.map((x) => {
       let obj = {}
       for (let i = 0; i < x.style.length; i++) {
@@ -30,7 +51,7 @@ export default function SingleSlider({ noInfinite, switchInterval, id, descEl, d
     const desc = imagesTags.map((el) => el.getAttribute('alt'))
     const content = Array.from(domContent.querySelectorAll('[data-slider-image-content]'))
     domContent.style.display = 'none'
-    domContent.innerHTML = ""
+    domContent.innerHTML = ''
     return { items, classes, desc, content, links }
   })
 
@@ -39,7 +60,8 @@ export default function SingleSlider({ noInfinite, switchInterval, id, descEl, d
   // Important only if specifyng width, centers the element in the slider
   const offset = 0
   const [springs, set] = useSprings(items.length, (i) => ({
-    x: (i < items.length - 1 ? i : -1) * width + offset, 
+    x: (i < items.length - 1 ? i : -1) * width + offset,
+    config
   }))
   const prev = useRef([0, 1])
   const index = useRef(0)
@@ -57,15 +79,14 @@ export default function SingleSlider({ noInfinite, switchInterval, id, descEl, d
         }
       }
 
-        if (index.current + 1 > items.length) {
-          setActive((index.current % items.length) + 1)
-        } else if (index.current < 0) {
-          setActive(items.length + ((index.current + 1) % items.length))
-        } else {
-          setActive(index.current + 1)
-        }
+      if (index.current + 1 > items.length) {
+        setActive((index.current % items.length) + 1)
+      } else if (index.current < 0) {
+        setActive(items.length + ((index.current + 1) % items.length))
+      } else {
+        setActive(index.current + 1)
+      }
 
-      
       // The actual scrolling value
       const finalY = index.current * width
       // Defines currently visible slides
@@ -87,51 +108,55 @@ export default function SingleSlider({ noInfinite, switchInterval, id, descEl, d
           // So when an item is moved from one end to the other we don't
           // see it moving
           immediate: vy < 0 ? prevPosition > position : prevPosition < position,
+          config
         }
       })
       prev.current = [firstVis, firstVisIdx]
     },
-    [noInfinite, active, items.length, width, idx, visible, set, getPos]
+    [noInfinite, active, items.length, width, idx, visible, set, getPos, config]
   )
 
-  const bind = useGesture({
-    onDrag: ({ offset: [x], vxvy: [vx], down, direction: [xDir], cancel, distance, movement: [xMove], tap }) => {
-      if (tap) {
-        const linkEl = document.getElementById(`slider-link-${id}`)
-        if (linkEl.href && linkEl.href.length > 0) {
-          window.location.href = linkEl.href;
+  const bind = useGesture(
+    {
+      onDrag: ({ offset: [x], vxvy: [vx], down, direction: [xDir], cancel, distance, movement: [xMove], tap }) => {
+        if (tap) {
+          const linkEl = document.getElementById(`slider-link-${id}`)
+          if (linkEl.href && linkEl.href.length > 0) {
+            window.location.href = linkEl.href
+          }
         }
-      }
-      if (vx) {
+        if (vx) {
           runSprings(-x, -vx, down, xDir, cancel, xMove, distance)
         }
-    }
-  }, { filterTaps: true })
+      }
+    },
+    { filterTaps: true }
+  )
 
   useEffect(() => {
     const linkEl = document.getElementById(`slider-link-${id}`)
-    let element = father.current 
+    let element = father.current
     if (!linkEl && links && links.length > 0 && element) {
-      let parent = element.parentNode;
+      let parent = element.parentNode
       while (descEl && !parent.contains(descEl)) {
-        element = parent 
-        parent = parent.parentNode;
+        element = parent
+        parent = parent.parentNode
       }
-      element = parent 
-      parent = parent.parentNode;
-      const wrapper = document.createElement('a');
+      element = parent
+      parent = parent.parentNode
+      const wrapper = document.createElement('a')
       wrapper.id = `slider-link-${id}`
-      parent.replaceChild(wrapper, element);
-      wrapper.appendChild(element);
+      parent.replaceChild(wrapper, element)
+      wrapper.appendChild(element)
     }
   }, [id, links, descEl])
 
   useEffect(() => {
     const linkEl = document.getElementById(`slider-link-${id}`)
     if (linkEl) {
-      const callback = e => e.preventDefault()
-      linkEl.addEventListener("click", callback)
-      return () => linkEl.removeEventListener("click", callback)
+      const callback = (e) => e.preventDefault()
+      linkEl.addEventListener('click', callback)
+      return () => linkEl.removeEventListener('click', callback)
     }
   }, [id])
 
@@ -139,7 +164,7 @@ export default function SingleSlider({ noInfinite, switchInterval, id, descEl, d
     const linkEl = document.getElementById(`slider-link-${id}`)
     const attributes = links[active - 1]
     if (linkEl && attributes) {
-      Array.from(attributes).forEach(({name, value}) => linkEl.setAttribute(name, value))
+      Array.from(attributes).forEach(({ name, value }) => linkEl.setAttribute(name, value))
     }
   }, [active, id, links])
 
@@ -270,7 +295,7 @@ export default function SingleSlider({ noInfinite, switchInterval, id, descEl, d
                 className={`${classes[i]}`}
                 style={{
                   ...items[i],
-                  pointerEvents: 'none',
+                  pointerEvents: 'none'
                 }}
               />
             )}

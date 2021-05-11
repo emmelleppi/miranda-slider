@@ -1,16 +1,9 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import Slider from './MultiSlider'
-import { config } from 'react-spring'
 import { useSpring, animated } from 'react-spring'
 import { formatStringToCamelCase } from './utils'
 
 const trans = (x, y) => `translate3d(${x}px,${y}px,0) `
-
-const springOptions = {
-  normal: config.default,
-  ...config,
-  default: undefined
-}
 
 export default function MultiSlider({
   margin,
@@ -25,10 +18,21 @@ export default function MultiSlider({
   noInnerScale,
   buttonNext,
   currentIndex,
+  mass = 1,
+  tension = 70,
+  friction = 26,
   lastIndex
 }) {
   const isMobile = window.innerWidth <= 991
   const domContent = domEl
+  const config = useMemo(
+    () => ({
+      mass,
+      tension,
+      friction
+    }),
+    [mass, tension, friction]
+  )
   const [[imagesTags, realLength, domItemsLength]] = useState(() => {
     const array = Array.from(domContent.querySelectorAll('[data-slider-image]'))
     const realLength = array.length
@@ -49,10 +53,10 @@ export default function MultiSlider({
       }
       return [array, array.length, realLength]
     }
-    return [[...array,...array,...array], 3 * array.length, realLength]
+    return [[...array, ...array, ...array], 3 * array.length, realLength]
   })
 
-  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength )
+  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength)
   const [style, setStyle] = useState()
 
   const draggedScale = 0.05
@@ -99,11 +103,11 @@ export default function MultiSlider({
 
   useEffect(() => {
     setStyle({
-      width: `10vw`,
+      width: `10vw`
       // margin: `0 0 0 ${(window.innerWidth * (isMobile ? marginMobile : margin)) / 100}px`
     })
     domContent.style.display = 'none'
-    domContent.innerHTML = ""
+    domContent.innerHTML = ''
   }, [imagesTags, isMobile, noDrag, setStyle, domContent, marginMobile, margin])
 
   useEffect(() => {
@@ -121,7 +125,7 @@ export default function MultiSlider({
         setIndex((s) => {
           const curr = s - 1
           if (curr < 0) {
-            return 0 
+            return 0
           }
           return curr
         })
@@ -137,7 +141,7 @@ export default function MultiSlider({
     const callback = (e) => {
       e.stopPropagation()
       e.preventDefault()
-      if ((noInfinite && index < domItemsLength-1) || !noInfinite) {
+      if ((noInfinite && index < domItemsLength - 1) || !noInfinite) {
         setIndex((s) => {
           const next = s + 1
           if (next >= realLength) {
@@ -163,7 +167,7 @@ export default function MultiSlider({
         }
       }
       if (buttonNext) {
-        if (index === domItemsLength-1) {
+        if (index === domItemsLength - 1) {
           buttonNext.classList.add('disabled')
         } else {
           buttonNext.classList.remove('disabled')
@@ -261,6 +265,9 @@ export default function MultiSlider({
         <Slider
           index={index}
           noDrag={noDrag}
+          draggedSpring={config}
+          trailingSpring={config}
+          releaseSpring={config}
           centered={centered}
           noInfinite={noInfinite}
           noInnerScale={noInnerScale}
@@ -275,13 +282,12 @@ export default function MultiSlider({
           // slideClassName="multiple-slider-image"
           onIndexChange={setIndex}
           trailingDelay={trailingDelay}
-          draggedScale={draggedScale}
-          >
+          draggedScale={draggedScale}>
           {imagesTags.map((el, i) => (
             <div
               style={{
-                pointerEvents: noDrag ? "auto" : 'none',
-                opacity: i >= domItemsLength && window.innerWidth < 479 && noInfinite && !centered ? 0 : 1 
+                pointerEvents: noDrag ? 'auto' : 'none',
+                opacity: i >= domItemsLength && window.innerWidth < 479 && noInfinite && !centered ? 0 : 1
               }}
               key={i}
               onClick={() => handleClick(i)}

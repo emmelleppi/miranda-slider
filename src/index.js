@@ -9,6 +9,9 @@ window.onload = () => {
     const sliderWrapper = document.createElement('div')
     const switchInterval = el.getAttribute('data-slider-switch-interval')
     const noInfinite = el.hasAttribute('data-slider-no-infinite')
+    const mass = parseInt(el.getAttribute('data-slider-mass'), 10)
+    const tension = parseInt(el.getAttribute('data-slider-tension'), 10)
+    const friction = parseInt(el.getAttribute('data-slider-friction'), 10)
     el.after(sliderWrapper)
     const descEl = document.querySelectorAll(`[data-slider-desc="${id}"]`)?.[0]
     const buttonPrev = document.querySelectorAll(`[data-slider-button-prev="${id}"]`)?.[0]
@@ -26,17 +29,23 @@ window.onload = () => {
         buttonNext={buttonNext}
         currentIndex={currentIndex}
         lastIndex={lastIndex}
+        mass={isNaN(mass) ? null : mass}
+        tension={isNaN(tension) ? null : tension}
+        friction={isNaN(friction) ? null : friction}
       />,
       sliderWrapper
     )
   })
-  
+
   const multiNodeElements = document.querySelectorAll('[data-multi-slider-id]')
   Array.from(multiNodeElements).forEach((el) => {
     const id = el.getAttribute('data-multi-slider-id')
     const showAlts = el.hasAttribute('data-multi-slider-show-alt')
     const noDrag = el.hasAttribute('data-multi-slider-no-drag')
     const noInfinite = el.hasAttribute('data-slider-no-infinite')
+    const mass = parseInt(el.getAttribute('data-multi-slider-mass'), 10)
+    const tension = parseInt(el.getAttribute('data-multi-slider-tension'), 10)
+    const friction = parseInt(el.getAttribute('data-multi-slider-friction'), 10)
     const margin = el.getAttribute('data-multi-slider-margin')
     const marginMobile = el.getAttribute('data-multi-slider-margin-mobile')
     const noInnerScale = el.hasAttribute('data-slider-no-inner-scale')
@@ -63,6 +72,9 @@ window.onload = () => {
         buttonNext={buttonNext}
         currentIndex={currentIndex}
         lastIndex={lastIndex}
+        mass={isNaN(mass) ? null : mass}
+        tension={isNaN(tension) ? null : tension}
+        friction={isNaN(friction) ? null : friction}
       />,
       sliderWrapper
     )

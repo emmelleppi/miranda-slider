@@ -35,6 +35,7 @@ const slidesWrapperStyle = () => ({
 export default function Slider({
   children,
   index,
+  config,
   noInfinite,
   realLength,
   noInnerScale,
@@ -129,6 +130,7 @@ export default function Slider({
       x: restPos.current,
       y: 0,
       zIndex: 0,
+      config,
       immediate: (key) => key === 'zIndex'
     }
   })
@@ -147,17 +149,14 @@ export default function Slider({
     // two options then:
     // 1. the index was changed through gestures: in that case indexRef
     // is equal to index, we just want to set the position where it should
-    
-    if (indexRef.current === index) {
-      if ((domItemsLength <= index && index < 2 * domItemsLength)) {
 
+    if (indexRef.current === index) {
+      if (domItemsLength <= index && index < 2 * domItemsLength) {
         set((_i) => ({
           [axis]: restPos.current,
           config: { ...releaseSpring, velocity: velocity.current }
         }))
-
       } else {
-
         set((_i) => ({
           [axis]: restPos.current,
           config: { ...releaseSpring, velocity: velocity.current },
@@ -169,7 +168,7 @@ export default function Slider({
             restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
             set((_i) => ({
               [axis]: restPos.current,
-              immediate: true,
+              immediate: true
             }))
             onIndexChange(aaa)
           }
@@ -200,7 +199,7 @@ export default function Slider({
               restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
               set((_i) => ({
                 [axis]: restPos.current,
-                immediate: true,
+                immediate: true
               }))
               onIndexChange(aaa)
               indexRef.current = aaa
@@ -211,17 +210,32 @@ export default function Slider({
     }
     // finally we update indexRef to match index
     indexRef.current = index
-  }, [maxIndex, index, set, root, axis, height, width, releaseSpring, draggedSpring, trailingDelay, centered, domItemsLength, onIndexChange, noInfinite])
+  }, [
+    maxIndex,
+    index,
+    set,
+    root,
+    axis,
+    height,
+    width,
+    releaseSpring,
+    draggedSpring,
+    trailingDelay,
+    centered,
+    domItemsLength,
+    onIndexChange,
+    noInfinite
+  ])
 
   useEffect(() => {
     const { offsetLeft, offsetWidth } = root.current.children[indexRef.current]
     restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
     set((_i) => ({
       [axis]: restPos.current,
-      immediate: true,
+      immediate: true
     }))
   }, [centered, set, width])
-  
+
   // adding the bind listener
   const bind = useDrag(
     ({
@@ -244,8 +258,8 @@ export default function Slider({
       const dir = -Math.sign(dx)
       const mov = movX
       const swipe = sx
-      
-      if ((noInfinite && ((index === 0 && mov > 0) || (index === domItemsLength-1 && mov < 0)))) {
+
+      if (noInfinite && ((index === 0 && mov > 0) || (index === domItemsLength - 1 && mov < 0))) {
         return
       }
 
@@ -272,11 +286,7 @@ export default function Slider({
           //   indexRef.current = Math.max(0, curr % (maxIndex + 1))
           // }
 
-          indexRef.current = clamp(
-            indexRef.current + (mov > 0 ? -1 : 1),
-            0,
-            realLength
-          );
+          indexRef.current = clamp(indexRef.current + (mov > 0 ? -1 : 1), 0, realLength)
         }
         // if the index is not equal to indexRef we know we've moved a slide
         // so we tell the user to update its index in the next tick and our useEffect
@@ -347,10 +357,9 @@ export default function Slider({
       to: { scale: 0 }
     })
   }, [ease, animateScale, noInnerScale])
-  
 
   return (
-    <div ref={root} className={className} style={{ ...rootStyle, ...style, ...(centered && {margin: "0 auto"}) }}>
+    <div ref={root} className={className} style={{ ...rootStyle, ...style, ...(centered && { margin: '0 auto' }) }}>
       {springs.map(({ [axis]: pos, zIndex }, i) => (
         <animated.div
           // passing the index as an argument will let our handler know
@@ -362,7 +371,7 @@ export default function Slider({
           style={{
             display: 'flex',
             flexFlow: 'column nowrap',
-            alignItems: centered ? "center" : 'flex-start',
+            alignItems: centered ? 'center' : 'flex-start',
             ...slideStyleFunc(i),
             zIndex,
             [axis]: pos,
