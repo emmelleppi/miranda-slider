@@ -63,6 +63,12 @@ export default function MultiSlider({
   const trailingDelay = 0
   const [loaded, setLoaded] = useState({})
 
+  useEffect(() => {
+    if (!noInfinite) {
+      setIndex(domItemsLength)
+    }
+  }, [setIndex, noInfinite, domItemsLength])
+
   const handleClick = useCallback(
     (i) => {
       if (i !== index) {
