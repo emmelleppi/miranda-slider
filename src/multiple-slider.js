@@ -56,7 +56,7 @@ export default function MultiSlider({
     return [[...array, ...array, ...array], 3 * array.length, realLength]
   })
 
-  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength)
+  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength + 1)
   const [style, setStyle] = useState()
 
   const draggedScale = 0.05
@@ -65,7 +65,7 @@ export default function MultiSlider({
 
   useEffect(() => {
     if (!noInfinite) {
-      setIndex(domItemsLength)
+      setTimeout(() => setIndex(domItemsLength), 500)
     }
   }, [setIndex, noInfinite, domItemsLength])
 

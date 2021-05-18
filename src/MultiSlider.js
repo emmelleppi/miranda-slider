@@ -179,34 +179,45 @@ export default function Slider({
       // is outdated and different from index. We want to animate depending
       // on the direction of the slide, with the furthest slide moving first
       // trailing the others
-
-      const dir = index < indexRef.current ? -1 : 1
-      // if direction is 1 then the first slide to animate should be the lowest
-      // indexed visible slide, if -1 the highest
-      const firstToMove = dir > 0 ? firstVisibleIndex.current : lastVisibleIndex.current
-      set((i) => {
-        return {
-          [axis]: restPos.current,
-          // config: key => key === axis && releaseSpring,
-          config: releaseSpring,
-          delay: i * dir < firstToMove * dir ? 0 : Math.abs(firstToMove - i) * trailingDelay,
-          onRest: () => {
-            if (!centered && noInfinite) return
-            if (!(domItemsLength <= index && index < 2 * domItemsLength)) {
-              const aaa = domItemsLength + (index % domItemsLength)
-              if (!root.current.children[aaa]) return
-              const { offsetLeft, offsetWidth } = root.current.children[aaa]
-              restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
-              set((_i) => ({
-                [axis]: restPos.current,
-                immediate: true
-              }))
-              onIndexChange(aaa)
-              indexRef.current = aaa
-            }
-          }
+      const isPrev = index < domItemsLength
+      const isOver = index >= 2 * domItemsLength
+      if (isPrev || isOver) {
+        let aaa = 0
+        if (isPrev) {
+          aaa = indexRef.current + domItemsLength
         }
-      })
+        if (isOver) {
+          aaa = indexRef.current - domItemsLength
+        }
+
+        if (!root.current.children[aaa]) return
+        const { offsetLeft, offsetWidth } = root.current.children[aaa]
+        restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
+        set((_i) => ({
+          [axis]: restPos.current,
+          immediate: true
+        }))
+        if (isPrev) {
+          onIndexChange(index + domItemsLength)
+        }
+        if (isOver) {
+          onIndexChange(index - domItemsLength)
+        }
+        indexRef.current = aaa
+      } else {
+        const dir = index < indexRef.current ? -1 : 1
+        // if direction is 1 then the first slide to animate should be the lowest
+        // indexed visible slide, if -1 the highest
+        const firstToMove = dir > 0 ? firstVisibleIndex.current : lastVisibleIndex.current
+        set((i) => {
+          return {
+            [axis]: restPos.current,
+            // config: key => key === axis && releaseSpring,
+            config: releaseSpring,
+            delay: i * dir < firstToMove * dir ? 0 : Math.abs(firstToMove - i) * trailingDelay
+          }
+        })
+      }
     }
     // finally we update indexRef to match index
     indexRef.current = index
