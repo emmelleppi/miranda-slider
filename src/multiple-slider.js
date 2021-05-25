@@ -210,7 +210,7 @@ export default function MultiSlider({
     if (cursor && !cursorOuterHtml) {
       const outerHTML = cursor.outerHTML.slice()
       setCursorOuterHtml(outerHTML)
-      cursor.outerHTML = ''
+      cursor.style.display = 'none'
     }
   }, [cursor, cursorOuterHtml, setCursorOuterHtml])
 
