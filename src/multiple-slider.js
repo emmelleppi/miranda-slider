@@ -204,13 +204,15 @@ export default function MultiSlider({
     }
   }, [x, y, setX, setY])
 
-  const [cursorOuterHtml] = useState(cursor?.outerHTML || null)
+  const [cursorOuterHtml, setCursorOuterHtml] = useState()
 
   useEffect(() => {
     if (cursor) {
+      const outerHTML = cursor.outerHTML.slice()
+      setCursorOuterHtml(outerHTML)
       cursor.style.display = 'none'
     }
-  }, [cursor])
+  }, [cursor, setCursorOuterHtml])
 
   useEffect(() => {
     setInterval(onScroll, 100)
