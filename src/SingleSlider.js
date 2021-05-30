@@ -6,6 +6,7 @@ import { formatStringToCamelCase } from './utils'
 export default function SingleSlider({
   noInfinite,
   switchInterval,
+  initSwitchDelay,
   id,
   descEl,
   domEl,
@@ -251,8 +252,9 @@ export default function SingleSlider({
     }
   }, [lastIndex, items])
 
+  const [started, setStarted] = useState(false)
   useEffect(() => {
-    if (switchInterval && switchInterval > 0) {
+    if (started && switchInterval && switchInterval > 0) {
       const callback = () => {
         index.current += 1
         runSprings(0, 1, true, -0, () => {}, -0)
@@ -260,7 +262,14 @@ export default function SingleSlider({
       const idInterval = setInterval(callback, switchInterval)
       return () => clearInterval(idInterval)
     }
-  }, [switchInterval, runSprings])
+  }, [switchInterval, runSprings, started])
+  useEffect(() => {
+    if (initSwitchDelay) {
+      setTimeout(() => setStarted(true), initSwitchDelay)
+    } else {
+      setStarted(true)
+    }
+  }, [setStarted, initSwitchDelay])
 
   return (
     <div

@@ -65,7 +65,7 @@ export default function MultiSlider({
 
   useEffect(() => {
     if (!noInfinite) {
-      setTimeout(() => setIndex(domItemsLength), 500)
+      setTimeout(() => setIndex(domItemsLength), 1000)
     }
   }, [setIndex, noInfinite, domItemsLength])
 

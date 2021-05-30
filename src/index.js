@@ -6,6 +6,7 @@ const nodeElements = document.querySelectorAll('[data-slider-id]')
 Array.from(nodeElements).forEach((el) => {
   const id = el.getAttribute('data-slider-id')
   const sliderWrapper = document.createElement('div')
+  const initSwitchDelay = el.getAttribute('data-slider-switch-init-delay')
   const switchInterval = el.getAttribute('data-slider-switch-interval')
   const noInfinite = el.hasAttribute('data-slider-no-infinite')
   const mass = parseInt(el.getAttribute('data-slider-mass'), 10)
@@ -20,6 +21,7 @@ Array.from(nodeElements).forEach((el) => {
   render(
     <SingleSlider
       id={id}
+      initSwitchDelay={switchInterval && initSwitchDelay && !noInfinite ? parseInt(initSwitchDelay, 10) : null}
       switchInterval={switchInterval && !noInfinite ? parseInt(switchInterval, 10) : null}
       noInfinite={noInfinite}
       domEl={el}
