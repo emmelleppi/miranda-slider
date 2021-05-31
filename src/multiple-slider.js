@@ -201,7 +201,7 @@ export default function MultiSlider({
       }
       if (
         !isVisible.current &&
-        rect.top >= 0 &&
+        rect.top >= -100 &&
         rect.left >= 0 &&
         rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
         rect.right <= (window.innerWidth || document.documentElement.clientWidth)
@@ -225,7 +225,7 @@ export default function MultiSlider({
   }, [cursor, setCursorOuterHtml])
 
   useEffect(() => {
-    setInterval(onScroll, 100)
+    setInterval(onScroll, 500)
   }, [onScroll])
 
   const cursorRef = useRef()
