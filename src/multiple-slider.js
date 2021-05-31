@@ -199,13 +199,7 @@ export default function MultiSlider({
       if (y !== domY) {
         setY(domY)
       }
-      if (
-        !isVisible.current &&
-        rect.top >= -window.innerHeight &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-      ) {
+      if (!isVisible.current && rect.top < 2 * window.innerHeight) {
         isVisible.current = true
         if (!noInfinite) {
           setIndex(domItemsLength)
