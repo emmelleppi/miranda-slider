@@ -195,12 +195,14 @@ export default function MultiSlider({
     xy: [0, 0]
   }))
   const onScroll = useCallback(() => {
-    const { x: domX, y: domY } = father.current.getBoundingClientRect()
-    if (x !== domX) {
-      setX(domX)
-    }
-    if (y !== domY) {
-      setY(domY)
+    if (father.current) {
+      const { x: domX, y: domY } = father.current.getBoundingClientRect()
+      if (x !== domX) {
+        setX(domX)
+      }
+      if (y !== domY) {
+        setY(domY)
+      }
     }
   }, [x, y, setX, setY])
 

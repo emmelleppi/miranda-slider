@@ -239,12 +239,14 @@ export default function Slider({
   ])
 
   useEffect(() => {
-    const { offsetLeft, offsetWidth } = root.current.children[indexRef.current]
-    restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
-    set((_i) => ({
-      [axis]: restPos.current,
-      immediate: true
-    }))
+    if (root.current && root.current.children[indexRef.current]) {
+      const { offsetLeft, offsetWidth } = root.current.children[indexRef.current]
+      restPos.current = Math.round(-offsetLeft) + (centered ? (width - offsetWidth) / 2 : 0)
+      set((_i) => ({
+        [axis]: restPos.current,
+        immediate: true
+      }))
+    }
   }, [centered, set, width])
 
   // adding the bind listener
