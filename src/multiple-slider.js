@@ -56,18 +56,12 @@ export default function MultiSlider({
     return [[...array, ...array, ...array], 3 * array.length, realLength]
   })
 
-  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength + 1)
+  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength)
   const [style, setStyle] = useState()
 
   const draggedScale = 0.05
   const trailingDelay = 0
   const [loaded, setLoaded] = useState({})
-
-  useEffect(() => {
-    if (!noInfinite) {
-      setTimeout(() => setIndex(domItemsLength), 1000)
-    }
-  }, [setIndex, noInfinite, domItemsLength])
 
   const handleClick = useCallback(
     (i) => {
