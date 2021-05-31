@@ -201,7 +201,7 @@ export default function MultiSlider({
       }
       if (
         !isVisible.current &&
-        rect.top >= -100 &&
+        rect.top >= -window.innerHeight &&
         rect.left >= 0 &&
         rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
         rect.right <= (window.innerWidth || document.documentElement.clientWidth)
