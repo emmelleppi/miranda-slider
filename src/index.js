@@ -2,7 +2,7 @@ import { render } from 'react-dom'
 import SingleSlider from './SingleSlider'
 import MultiSlider from './multiple-slider'
 
-window.onload = () => {
+window.SlidersInit = () => {
   const nodeElements = document.querySelectorAll('[data-slider-id]')
   Array.from(nodeElements).forEach((el) => {
     const id = el.getAttribute('data-slider-id')
