@@ -56,7 +56,7 @@ export default function MultiSlider({
     return [[...array, ...array, ...array], 3 * array.length, realLength]
   })
 
-  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength)
+  const [index, setIndex] = useState(noInfinite ? 0 : domItemsLength + 1)
   const [style, setStyle] = useState()
 
   const draggedScale = 0.05
@@ -188,17 +188,31 @@ export default function MultiSlider({
   const [cursorSpring, setCursor] = useSpring(() => ({
     xy: [0, 0]
   }))
+  const isVisible = useRef(false)
   const onScroll = useCallback(() => {
     if (father.current) {
-      const { x: domX, y: domY } = father.current.getBoundingClientRect()
+      const rect = father.current.getBoundingClientRect()
+      const { x: domX, y: domY } = rect
       if (x !== domX) {
         setX(domX)
       }
       if (y !== domY) {
         setY(domY)
       }
+      if (
+        !isVisible.current &&
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      ) {
+        isVisible.current = true
+        if (!noInfinite) {
+          setIndex(domItemsLength)
+        }
+      }
     }
-  }, [x, y, setX, setY])
+  }, [x, y, noInfinite, domItemsLength])
 
   const [cursorOuterHtml, setCursorOuterHtml] = useState()
 
