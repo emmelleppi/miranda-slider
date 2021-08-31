@@ -299,15 +299,13 @@ export default function SingleSlider({
               willChange: 'transform',
               overflow: 'hidden'
             }}>
-            {loaded[i] && (
-              <animated.div
-                className={`${classes[i]}`}
-                style={{
-                  ...items[i],
-                  pointerEvents: 'none'
-                }}
-              />
-            )}
+            <animated.div
+              className={`${classes[i]}`}
+              style={{
+                ...items[i],
+                pointerEvents: 'none'
+              }}
+            />
           </animated.div>
         </animated.div>
       ))}
