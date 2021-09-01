@@ -245,10 +245,10 @@ export default function SingleSlider({
     }
   }, [noInfinite, active, buttonNext, runSprings, items.length])
 
-  useEffect(() => {
-    const { width } = father.current.getBoundingClientRect()
-    setWidth(width)
-  }, [setWidth])
+  // useEffect(() => {
+  //   const { width } = father.current.getBoundingClientRect()
+  //   setWidth(width)
+  // }, [setWidth])
 
   useEffect(() => {
     if (lastIndex) {
