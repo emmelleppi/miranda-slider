@@ -33,8 +33,7 @@ export default function SingleSlider({
   )
   const domContent = domEl
   const [width, setWidth] = useState(() => {
-    const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
-    const { width } = imagesTags[0].getBoundingClientRect()
+    const { width } = domContent.getBoundingClientRect()
     return width
   })
 
