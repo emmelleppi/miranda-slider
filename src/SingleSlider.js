@@ -20,7 +20,7 @@ export default function SingleSlider({
   visible = 1
 }) {
   const father = useRef()
-  const [width, setWidth] = useState(window.innerWidth)
+
   const [active, setActive] = useState(1)
   const [loaded, setLoaded] = useState({})
   const config = useMemo(
@@ -32,6 +32,11 @@ export default function SingleSlider({
     [mass, tension, friction]
   )
   const domContent = domEl
+  const [width, setWidth] = useState(() => {
+    const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
+    const { width } = imagesTags[0].getBoundingClientRect()
+    return width
+  })
 
   const [{ items, classes, desc, content, links }] = useState(() => {
     const imagesTags = Array.from(domContent.querySelectorAll('[data-slider-image]'))
